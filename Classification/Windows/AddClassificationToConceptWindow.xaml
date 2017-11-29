@@ -1,0 +1,23 @@
+﻿<Window x:Class="Classification.Windows.AddClassificationToConceptWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Classification.Windows"
+        mc:Ignorable="d"
+        Title="Добавить понятие к классификации" Height="295.63" Width="445.46">
+    <Grid>
+        <TextBlock HorizontalAlignment="Left" FontSize="16" Margin="64,23,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="24" Width="123"><Run Text="Классификация"/><LineBreak/><Run/></TextBlock>
+        <TextBlock HorizontalAlignment="Left" FontSize="16" Margin="10,113,0,0" TextWrapping="Wrap" Text="Родительское понятие" VerticalAlignment="Top" Height="24" Width="177"/>
+        <ComboBox x:Name="ClassificationsComboBox" HorizontalAlignment="Left" Margin="192,25,0,0" VerticalAlignment="Top" Width="237" SelectionChanged="ClassificationsComboBox_SelectionChanged"/>
+
+        <TextBlock HorizontalAlignment="Left" FontSize="16" Margin="114,67,0,0" TextWrapping="Wrap" Text="Понятие" VerticalAlignment="Top" Height="24" Width="73"/>
+        <ComboBox x:Name="ConceptsComboBox" ItemsSource="{Binding}"  HorizontalAlignment="Left" Margin="192,69,0,0" VerticalAlignment="Top" Width="237" SelectionChanged="ConceptsComboBox_SelectionChanged">
+        </ComboBox>
+        <Button x:Name="AddClassificationToPropertyButton" FontSize="16" Content="Добавить" HorizontalAlignment="Center" Margin="159,202,156.2,0" VerticalAlignment="Top" Width="124" Height="36"/>
+        <TextBox x:Name="SpeciesDifferenceTextBox" HorizontalAlignment="Left" FontSize="16" Height="24" Margin="192,156,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="237"/>
+        <TextBlock HorizontalAlignment="Left" FontSize="16" Margin="48,156,0,0" TextWrapping="Wrap" Text="Видовое отличие" VerticalAlignment="Top" Height="24" Width="139"/>
+        <ComboBox x:Name="ParentConceptComboBox" ItemsSource="{Binding}"  HorizontalAlignment="Left" Margin="192,115,0,0" VerticalAlignment="Top" Width="237"/>
+
+    </Grid>
+</Window>
