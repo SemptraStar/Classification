@@ -11,7 +11,7 @@
 
 
     <Grid>
-        <DataGrid x:Name="ClassificationsDataGrid" HorizontalAlignment="Left" Height="425" Margin="22,113,0,0" VerticalAlignment="Top" Width="681" AutoGenerateColumns="False" FontSize="16" SelectionChanged="ClassificationsDataGrid_SelectionChanged">
+        <DataGrid x:Name="ClassificationsDataGrid" HorizontalAlignment="Left" IsReadOnly="True" CanUserAddRows="false" Height="425" Margin="22,113,0,0" VerticalAlignment="Top" Width="609" AutoGenerateColumns="False" FontSize="16" SelectionChanged="ClassificationsDataGrid_SelectionChanged">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Id}" Header="ID" Width="0.8*"/>
                 <DataGridTextColumn Binding="{Binding Type}" Header="Тип" Width="3*"/>
@@ -19,21 +19,41 @@
                 <DataGridTextColumn Binding="{Binding Base}" Header="Основание" Width="3*"/>
             </DataGrid.Columns>
         </DataGrid>
-        <Button x:Name="SaveConcepts" Content="Сохранить изменения" HorizontalAlignment="Left" Margin="50,562,0,0" VerticalAlignment="Top" Width="178" Height="38" FontSize="16" Click="SaveConcepts_Click"/>
-        <TextBlock HorizontalAlignment="Left" Margin="200,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="30" Height="36" Width="280" Text="Классификации"/>
-        <TextBlock HorizontalAlignment="Left" Margin="869,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="30" Height="36" Width="395" Text="Понятния в классификации"/>
-        <TextBlock HorizontalAlignment="Left" Margin="1481,634,0,0" TextWrapping="Wrap" Text=";" VerticalAlignment="Top" FontSize="16" Height="24" Width="19"/>
-        <Button x:Name="AddClassificationButton" Content="Добавить классификацию" HorizontalAlignment="Left" Margin="233,562,0,0" VerticalAlignment="Top" Width="204" Height="38" FontSize="16" Click="AddClassificationButton_Click"/>
-        <DataGrid x:Name="ConceptsDataGrid" HorizontalAlignment="Left" Height="425" Margin="729,113,0,0" VerticalAlignment="Top" Width="771" AutoGenerateColumns="False" FontSize="16">
+        <TextBlock HorizontalAlignment="Left" TextAlignment="Center" Margin="22,47,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="30" Height="36" Text="Классификации" RenderTransformOrigin="0.5,0.5" Width="608" />
+        <TextBlock HorizontalAlignment="Left" TextAlignment="Center" Margin="652,47,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="30" Height="36" Width="848" Text="Понятия в классификации"/>
+        <Button x:Name="AddClassificationButton" Content="Добавить классификацию" HorizontalAlignment="Left" Margin="22,562,0,0" VerticalAlignment="Top" Width="204" Height="38" FontSize="16" Click="AddClassificationButton_Click"/>
+        <DataGrid x:Name="ConceptsDataGrid" HorizontalAlignment="Left" IsReadOnly="True" CanUserAddRows="false" Height="425" Margin="652,113,0,0" VerticalAlignment="Top" Width="848" AutoGenerateColumns="False" FontSize="16">
             <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Id}" Header="ID" Width="0.2*"/>
                 <DataGridTextColumn Binding="{Binding Name}" Header="Понятие" Width="*"/>
                 <DataGridTextColumn Binding="{Binding Parent}" Header="Родительское понятие" Width="*"/>
-                <DataGridTextColumn Binding="{Binding SpecDifference}" Header="Видовое отличие" Width="*"/>
-                <DataGridTextColumn Binding="{Binding Definition}" Header="Определение" Width="*"/>
+                <DataGridTemplateColumn Header="Видовое отличие" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock 
+                                TextAlignment="Justify" 
+                                TextWrapping="Wrap"
+                                Text="{Binding SpecDifference}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn >
+                <DataGridTemplateColumn Header="Определение" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock 
+                                TextAlignment="Justify"
+                                TextWrapping="Wrap"
+                                Text="{Binding Definition}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn >
                 <DataGridTextColumn Binding="{Binding Level}" Header="Уровень" Width="0.4*"/>
             </DataGrid.Columns>
         </DataGrid>
-        <Button x:Name="AddConceptButton" Content="Добавить понятие в классификацию" HorizontalAlignment="Left" Margin="776,562,0,0" VerticalAlignment="Top" Width="285" Height="38" FontSize="16" Click="AddConceptButton_Click"/>
+        <Button x:Name="AddConceptButton" Content="Добавить понятие в классификацию" HorizontalAlignment="Left" Margin="231,562,0,0" VerticalAlignment="Top" Width="285" Height="38" FontSize="16" Click="AddConceptButton_Click"/>
+        <Button x:Name="AddDefinition" Content="Добавить определение к понятию" HorizontalAlignment="Left" Margin="652,562,0,0" VerticalAlignment="Top" Width="270" Height="38" FontSize="16" Click="AddDefinition_Click"/>
+        <Button x:Name="ChangeDefinition" Content="Изменить определение понятия" HorizontalAlignment="Left" Margin="652,605,0,0" VerticalAlignment="Top" Width="270" Height="38" FontSize="16" Click="ChangeDefinition_Click"/>
+        <Button x:Name="VisulizeConceptsTree" Content="Показать граф классификации" HorizontalAlignment="Left" Margin="22,606,0,0" VerticalAlignment="Top" Width="241" Height="38" FontSize="16" Click="VisulizeConceptsTree_Click"/>
 
     </Grid>
 </Page>

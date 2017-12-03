@@ -11,33 +11,44 @@
 
 
     <Grid>
-        <DataGrid x:Name="SourcesDataGrid" HorizontalAlignment="Left" Height="425" Margin="50,113,0,0" VerticalAlignment="Top" Width="701" AutoGenerateColumns="False" FontSize="16">
+        <DataGrid x:Name="SourcesDataGrid" HorizontalAlignment="Left" IsReadOnly="True" CanUserAddRows="False" Height="425" Margin="50,113,0,0" VerticalAlignment="Top" Width="701" AutoGenerateColumns="False" FontSize="16" SelectionChanged="SourcesDataGrid_SelectionChanged">
             <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Id}" Header="Id" Width="0.5*"/>
                 <DataGridTextColumn Binding="{Binding Name}" Header="Источник" Width="3*"/>
                 <DataGridTextColumn Binding="{Binding Author}" Header="Автор" Width="3*"/>
                 <DataGridTextColumn Binding="{Binding Year}" Header="Год" Width="*" />
             </DataGrid.Columns>
         </DataGrid>
-        <Button x:Name="SaveSources" Content="Сохранить" HorizontalAlignment="Left" Margin="50,562,0,0" VerticalAlignment="Top" Width="150" Height="38" FontSize="16" Click="SaveSources_Click"/>
+        <Button x:Name="AddSource" Content="Добавить" HorizontalAlignment="Left" Margin="50,562,0,0" VerticalAlignment="Top" Width="150" Height="38" FontSize="16" Click="AddSource_Click"/>
         <TextBlock HorizontalAlignment="Left" Margin="200,41,0,0" TextWrapping="Wrap" Text="Источники" VerticalAlignment="Top" FontSize="30" Height="36" Width="230"/>
-        <DataGrid x:Name="SourcesQueryTable" CanUserSortColumns="False" IsReadOnly="True"  HorizontalAlignment="Left" Height="425" Margin="775,113,0,0" VerticalAlignment="Top" Width="701" AutoGenerateColumns="False" FontSize="16">
+        <TextBlock HorizontalAlignment="Left" Margin="763,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="30" Height="36" Width="701"><Run Text="Определения понятий "/><Run Text="из источника"/></TextBlock>
+        <DataGrid x:Name="DefinitionsDataGrid" HorizontalAlignment="Left" Height="425" Margin="763,113,0,0" VerticalAlignment="Top" Width="701" AutoGenerateColumns="False" FontSize="16">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Name}" Header="Name" Width="3*"/>
-                <DataGridTextColumn Binding="{Binding Author}" Header="Author" Width="3*"/>
-                <DataGridTextColumn Binding="{Binding Year}" Header="Year" Width="*" />
+                <DataGridTemplateColumn Header="Понятие" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock 
+                                TextAlignment="Justify" 
+                                TextWrapping="Wrap"
+                                Text="{Binding Concept}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn >
+                <DataGridTemplateColumn Header="Определение" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock 
+                                TextAlignment="Justify" 
+                                TextWrapping="Wrap"
+                                Text="{Binding Definition}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn >
+                <DataGridTextColumn Binding="{Binding Page}" Header="Страница" Width="0.5*"/>
             </DataGrid.Columns>
         </DataGrid>
-        <TextBlock HorizontalAlignment="Left" Margin="869,41,0,0" TextWrapping="Wrap" Text="Source query table" VerticalAlignment="Top" FontSize="30" Height="36" Width="300"/>
-        <TextBox x:Name="SelectTextBox" FontSize="16" HorizontalAlignment="Left" Height="24" Margin="832,576,0,0" TextWrapping="Wrap" Text="" TextAlignment="Left" VerticalAlignment="Top" Width="536"/>
-        <TextBlock HorizontalAlignment="Left" Margin="775,543,0,0" TextWrapping="Wrap" Text="Query" VerticalAlignment="Top" FontSize="20" Height="36" Width="300"/>
-        <Button x:Name="ExecQueryButton" Content="Execute" HorizontalAlignment="Left" Margin="773,663,0,0" VerticalAlignment="Top" Width="150" Height="38" FontSize="16" Click="ExecQueryButton_Click"/>
-        <TextBlock HorizontalAlignment="Left" Margin="775,576,0,0" TextWrapping="Wrap" Text="SELECT" VerticalAlignment="Top" FontSize="16" Height="24" Width="52"/>
-        <TextBlock HorizontalAlignment="Left" Margin="1373,576,0,0" TextWrapping="Wrap" Text="FROM Source" VerticalAlignment="Top" FontSize="16" Height="24" Width="103"/>
-        <TextBlock HorizontalAlignment="Left" Margin="773,605,0,0" TextWrapping="Wrap" Text="WHERE" VerticalAlignment="Top" FontSize="16" Height="24" Width="59"/>
-        <TextBox x:Name="WhereTextBox"  FontSize="16" HorizontalAlignment="Left" Height="24" Margin="832,605,0,0" TextWrapping="Wrap" Text="" TextAlignment="Left" VerticalAlignment="Top" Width="644"/>
-        <TextBlock HorizontalAlignment="Left" Margin="773,634,0,0" TextWrapping="Wrap" Text="ORDER BY" VerticalAlignment="Top" FontSize="16" Height="24" Width="75"/>
-        <TextBox x:Name="OrderByTextBox"  FontSize="16" HorizontalAlignment="Left" Height="24" Margin="853,634,0,0" TextWrapping="Wrap" Text="" TextAlignment="Left" VerticalAlignment="Top" Width="623"/>
-        <TextBlock HorizontalAlignment="Left" Margin="1481,634,0,0" TextWrapping="Wrap" Text=";" VerticalAlignment="Top" FontSize="16" Height="24" Width="19"/>
+        <Button x:Name="ChangeSources" Content="Изменить" HorizontalAlignment="Left" Margin="205,562,0,0" VerticalAlignment="Top" Width="150" Height="38" FontSize="16" Click="ChangeSources_Click"/>
+        <Button x:Name="DeleteSources" Content="Удалить" HorizontalAlignment="Left" Margin="360,562,0,0" VerticalAlignment="Top" Width="150" Height="38" FontSize="16" Click="DeleteSources_Click"/>
 
     </Grid>
 </Page>

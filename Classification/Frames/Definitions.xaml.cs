@@ -27,9 +27,6 @@ namespace Classification.Frames
     {
         private readonly SQLClient _SQLClient;
 
-        private SqlDataAdapter _MainViewDefinitionsAdapter;
-        private SqlDataAdapter _QueryDefinitionsAdapter;
-
         public Definitions()
         {
             InitializeComponent();
@@ -42,25 +39,19 @@ namespace Classification.Frames
             DataTables.DefinitiosDataTable = new System.Data.DataTable();         
             DefinitionsDataGrid.ItemsSource = DataTables.DefinitiosDataTable?.DefaultView;
 
-            DataTables.DefinitionsQueryDataTable = new System.Data.DataTable();
-            ConceptsQueryTable.ItemsSource = DataTables.DefinitionsQueryDataTable?.DefaultView;
-
             SelectClassifications();
         }
 
         private void SelectClassifications()
         {
-            SqlDataAdapter adapter = new SqlDataAdapter();
-            DataTable tempDT = new DataTable();
-            _SQLClient.Select(tempDT, ref adapter, "SELECT " +
-                "Classification.IdClassification as Id, Classification.Base as Base, Classification.Type as Type " +
-                "FROM Classification;");
-
+            DataTable dataTable = _SQLClient.SelectClassifications();
             List<string> classifications = new List<string>();
 
-            foreach (DataRow row in tempDT.Rows)
+            foreach (DataRow row in dataTable.Rows)
             {
-                classifications.Add(row["Id"].ToString().Trim() + ". Base: " + row["Base"].ToString().Trim() + "; Type: " + row["Type"].ToString().Trim());
+                classifications.Add(row["Id"].ToString().Trim() +
+                    ". Основание: " + row["Base"].ToString().Trim() +
+                    "; Тип: " + row["Type"].ToString().Trim());
             }
 
             ClassificationsComboBox.ItemsSource = null;
@@ -69,46 +60,16 @@ namespace Classification.Frames
 
         private void SelectDefinitions()
         {
-            DataTables.DefinitiosDataTable = (DataTable)_SQLClient.ExecuteProcdureScalar("SelectDefinitions", 
-                new string[] { "@ClassificationId" }, 
-                new object[] { ClassificationsComboBox.SelectedItem.ToString().Split('.')[0] }
-                );
+            int classificationId = int.Parse(ClassificationsComboBox
+                .SelectedItem
+                .ToString()
+                .Split('.')[0]);
 
+            DataTables.DefinitiosDataTable.Clear();
+            DataTables.DefinitiosDataTable = _SQLClient.SelectClassificationDefinitions(classificationId);
+
+            DefinitionsDataGrid.ItemsSource = null;
             DefinitionsDataGrid.ItemsSource = DataTables.DefinitiosDataTable?.DefaultView;
-        }
-
-        private void SaveConcepts_Click(object sender, RoutedEventArgs e)
-        {
-            _SQLClient.Update(DataTables.ConceptsDataTable, _MainViewDefinitionsAdapter);
-        }
-
-        private void ExecQueryButton_Click(object sender, RoutedEventArgs e)
-        {
-            DataTables.ConceptsQueryDataTable?.Clear();
-
-            string sql_query = "SELECT ";
-
-            if (SelectTextBox.Text != "")
-                sql_query += SelectTextBox.Text;
-
-            sql_query += " FROM Concept";
-
-            if (WhereTextBox.Text != "")
-                sql_query += " WHERE " + WhereTextBox.Text;
-
-            if (OrderByTextBox.Text != "")
-                sql_query += " ORDER BY " + OrderByTextBox.Text;
-
-            sql_query += ";";
-
-            try
-            {
-                _SQLClient.Select(DataTables.ConceptsQueryDataTable, ref _QueryDefinitionsAdapter, sql_query);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
         }
 
         private void ClassificationsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -1,0 +1,24 @@
+﻿<Page x:Class="Classification.Graphs.TreeVisualizationPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Classification.Graphs"
+      xmlns:graphsharp="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
+      xmlns:tree="clr-namespace:GraphSharp.Algorithms.Layout.Simple.Tree;assembly=GraphSharp"
+      mc:Ignorable="d" 
+      d:DesignHeight="1080" d:DesignWidth="1920"
+      Title="TreeVisualizationPage"
+      x:Name="root">
+
+    <Grid>
+        <graphsharp:GraphLayout x:Name="MainGraphLayout" Graph="{Binding ElementName=root, Path=ClassificationTree}"
+            LayoutAlgorithmType="EfficientSugiyama" OverlapRemovalAlgorithmType="FDA" EdgeRoutingAlgorithmType="" HighlightAlgorithmType="Simple" RenderTransformOrigin="0.5,0.5" Margin="0,89,0,0">
+            <graphsharp:GraphLayout.LayoutParameters>
+                <tree:SimpleTreeLayoutParameters Direction="BottomToTop"></tree:SimpleTreeLayoutParameters>
+            </graphsharp:GraphLayout.LayoutParameters>
+        </graphsharp:GraphLayout>
+        <TextBlock HorizontalAlignment="Left" FontSize="16" Margin="51,33,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="24" Width="123"><Run Text="Классификация"/><LineBreak/><Run/></TextBlock>
+        <ComboBox x:Name="ClassificationsComboBox" HorizontalAlignment="Left" Margin="180,36,0,0" VerticalAlignment="Top" Width="237" SelectionChanged="ClassificationsComboBox_SelectionChanged"/>
+    </Grid>
+</Page>

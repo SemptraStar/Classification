@@ -29,24 +29,24 @@ namespace Classification.Windows
         {
             InitializeComponent();
         }
-
         public AddClassificationWindow(SQLClient client) : this()
         {
             _SQLClient = client;
 
-            GetConceptsList();
+            SelectConcepts();
         }
 
-        private void GetConceptsList()
+        private void SelectConcepts()
         {
-            SqlDataAdapter adapter = new SqlDataAdapter();
-            DataTable tempDT = new DataTable();
-            _SQLClient.Select(tempDT, ref adapter, "SELECT IdConcept, Name FROM Concept;");
+            DataTable dataTable = _SQLClient.SelectConcepts();
             List<string> concepts = new List<string>();
 
-            foreach(DataRow row in tempDT.Rows)
+            foreach(DataRow row in dataTable.Rows)
             {
-                concepts.Add(row["IdConcept"].ToString() + ". " + row["Name"].ToString().Trim());
+                concepts.Add(
+                    row["Id"].ToString() + ". " + 
+                    row["Name"].ToString().Trim()
+                    );
             }
 
             ConceptsRootComboBox.ItemsSource = concepts;
@@ -56,22 +56,18 @@ namespace Classification.Windows
         {
             try
             {
-                _SQLClient.ExecuteProcedureVoid("InsertClassification",
-                    new string[] { "@Type", "@ConceptRootId", "@Base"    },
-                    new object[]
-                    {
+                _SQLClient.InsertClassification(
                         ClassificationTypeComboBox.Text,
-                        ConceptsRootComboBox.Text.Split('.')[0],
+                        int.Parse(ConceptsRootComboBox.Text.Split('.')[0]),
                         ClassificationBaseTextBox.Text
-                    });
+                    );
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error");
             }
 
-            Frames.Classifications.Instance.SaveChangesToDB();
-            Frames.Classifications.Instance.RefreshClassificationsDataGrid();
+            Frames.Classifications.Instance.SelectClassifications();
         }
     }
 }

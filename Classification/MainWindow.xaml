@@ -15,9 +15,7 @@
                 <MenuItem x:Name="PropertiesOpen" Header="_Свойства" FontSize="16" Click="PropertiesOpen_Click"/>
                 <MenuItem x:Name="DefinitionsOpen" Header="_Определения" FontSize="16" Click="DefinitionsOpen_Click"/>
                 <MenuItem x:Name="SourcesOpen" Header="_Источники" FontSize="16" Click="SourcesOpen_Click"/>
-                <MenuItem x:Name="Relations" Header="_Связи" FontSize="16">
-                    <MenuItem x:Name="ClassificationsToConceptsOpen" Header="_Classification to concepts" FontSize="16" Click="ClassificationsToConceptsOpen_Click"/>
-                </MenuItem>
+                <MenuItem x:Name="GraphVisualization" Header="_Визуализация" FontSize="16" Click="GraphVisualization_Click"/>
             </Menu>
             <StackPanel>
                 <Frame x:Name="MainFrame" Content="Frame" Height="1027"/>

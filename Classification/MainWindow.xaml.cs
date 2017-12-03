@@ -24,36 +24,46 @@ namespace Classification
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static MainWindow Instance;
+
         private SQLClient _SQLClient;
 
         private Frames.Classifications _ClassificationPage;
         private Frames.Concepts _ConceptPage;
-        private Frames.ClassificationsToConcept _ClassificationsToConceptsPage;
         private Frames.Properties _PropertiesPage;
         private Frames.Definitions _DefinitionsPage;
         private Frames.Sources _SourcePage;
-        
+        private Graphs.GraphVisualizationWindow _GraphVisualizationWindow;
+        private Graphs.TreeVisualizationPage _TreeVisualizationPage;
 
         public MainWindow()
         {
             InitializeComponent();
 
+            Instance = this;
+
             _SQLClient = new SQLClient();
             InitPages();
 
             MainFrame.NavigationService.Navigate(_ClassificationPage);
-        }
+        }    
 
         private void InitPages()
         {
             _ClassificationPage = new Frames.Classifications(_SQLClient);
             _ConceptPage = new Frames.Concepts(_SQLClient);
-            _ClassificationsToConceptsPage = new Frames.ClassificationsToConcept(_SQLClient);
             _PropertiesPage = new Frames.Properties(_SQLClient);
             _DefinitionsPage = new Frames.Definitions(_SQLClient);
             _SourcePage = new Frames.Sources(_SQLClient);
+            _TreeVisualizationPage = new Graphs.TreeVisualizationPage(_SQLClient);
         }
 
+        public Graphs.GraphVisualizationWindow ShowGraphVisualizationWindow()
+        {
+            _GraphVisualizationWindow = new Graphs.GraphVisualizationWindow();
+            _GraphVisualizationWindow.Show();
+            return _GraphVisualizationWindow;
+        }
 
         private void ClassificationsOpen_Click(object sender, RoutedEventArgs e)
         {
@@ -75,14 +85,14 @@ namespace Classification
             MainFrame.NavigationService.Navigate(_SourcePage);
         }
 
-        private void ClassificationsToConceptsOpen_Click(object sender, RoutedEventArgs e)
-        {
-            MainFrame.NavigationService.Navigate(_ClassificationsToConceptsPage);
-        }
-
         private void DefinitionsOpen_Click(object sender, RoutedEventArgs e)
         {
             MainFrame.NavigationService.Navigate(_DefinitionsPage);
+        }
+
+        private void GraphVisualization_Click(object sender, RoutedEventArgs e)
+        {
+            MainFrame.Navigate(_TreeVisualizationPage);
         }
     }
 }

@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 
 using Classification.Utility.SQL;
 using System.Data.SqlClient;
+using System.Data;
 
 namespace Classification.Frames
 {
@@ -27,9 +28,6 @@ namespace Classification.Frames
         public static Properties Instance;
 
         private readonly SQLClient _SQLClient;
-
-        private SqlDataAdapter _MainViewPropertiesAdapter;
-        private SqlDataAdapter _QueryPropertiesAdapter;
 
         public Properties()
         {
@@ -43,64 +41,57 @@ namespace Classification.Frames
             _SQLClient = client;
 
             DataTables.PropertiesDataTable = new System.Data.DataTable();
-            _SQLClient.Select(DataTables.PropertiesDataTable, ref _MainViewPropertiesAdapter,
-                "SELECT Property.Name, Concept.Name as ConceptRoot, Property.Measure FROM Property INNER JOIN Concept ON Property.IdConceptRoot = Concept.IdConcept;");
-            PropertiesDataGrid.ItemsSource = DataTables.PropertiesDataTable?.DefaultView;
-
-            DataTables.PropertiesQueryDataTable = new System.Data.DataTable();
-            PropertiesQueryTable.ItemsSource = DataTables.PropertiesQueryDataTable?.DefaultView;
-        }
-
-        private void SaveConcepts_Click(object sender, RoutedEventArgs e)
-        {
-            SaveChangesToDB();
-        }
-
-        public void SaveChangesToDB()
-        {
-            _SQLClient.Update(DataTables.PropertiesDataTable, _MainViewPropertiesAdapter);
+            RefreshDataGrid();
         }
 
         public void RefreshDataGrid()
         {
             DataTables.PropertiesDataTable.Clear();
-            _SQLClient.Select(DataTables.PropertiesDataTable, ref _MainViewPropertiesAdapter,
-                "SELECT Property.Name, Concept.Name as ConceptRoot, Property.Measure FROM Property INNER JOIN Concept ON Property.IdConceptRoot = Concept.IdConcept;");
-        }
+            DataTables.PropertiesDataTable = _SQLClient.SelectProperties();
 
-        private void ExecQueryButton_Click(object sender, RoutedEventArgs e)
-        {
-            DataTables.PropertiesQueryDataTable?.Clear();
-
-            string sql_query = "SELECT ";
-
-            if (SelectTextBox.Text != "")
-                sql_query += SelectTextBox.Text;
-
-            sql_query += " FROM Property";
-
-            if (WhereTextBox.Text != "")
-                sql_query += " WHERE " + WhereTextBox.Text;
-
-            if (OrderByTextBox.Text != "")
-                sql_query += " ORDER BY " + OrderByTextBox.Text;
-
-            sql_query += ";";
-
-            try
-            {
-                _SQLClient.Select(DataTables.PropertiesQueryDataTable, ref _QueryPropertiesAdapter, sql_query);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            PropertiesDataGrid.ItemsSource = null;
+            PropertiesDataGrid.ItemsSource = DataTables.PropertiesDataTable?.DefaultView;
         }
 
         private void AddProperty_Click(object sender, RoutedEventArgs e)
         {
             var addProperyWindow = new Windows.AddPropertyWindow(_SQLClient);
             addProperyWindow.Show();
+        }
+
+        private void ChangeConcepts_Click(object sender, RoutedEventArgs e)
+        {
+            if (PropertiesDataGrid.SelectedItems.Count == 1)
+            {
+                int selectedPropertyId = (int)((DataRowView)PropertiesDataGrid.SelectedItem)["Id"];
+
+                var changeProperyWindow = new Windows.ChangePropertyWindow(_SQLClient, selectedPropertyId);
+                changeProperyWindow.Show();
+            }          
+        }
+
+        private void DeleteProperty_Click(object sender, RoutedEventArgs e)
+        {
+            if (PropertiesDataGrid.SelectedItems.Count > 0)
+            {
+                if (MessageBox.Show(
+                    $"Вы действительно желаете удалить " +
+                    $"({PropertiesDataGrid.SelectedItems.Count}) свойств(о/а)? " +
+                    $"Это действие нельзя будет отменить.", 
+                    "Удаление свойств", 
+                    MessageBoxButton.YesNo, 
+                    MessageBoxImage.Warning) == MessageBoxResult.No)
+                {
+                    return;
+                }
+
+                foreach (var item in PropertiesDataGrid.SelectedItems)
+                {
+                    _SQLClient.DeleteProperty((int)((DataRowView)item)["Id"]);                            
+                }
+
+                RefreshDataGrid();
+            }
         }
     }
 }

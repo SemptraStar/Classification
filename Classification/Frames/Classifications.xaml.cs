@@ -1,18 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using Classification.Utility.SQL;
 using System.Data.SqlClient;
@@ -29,13 +16,7 @@ namespace Classification.Frames
 
         private readonly SQLClient _SQLClient;
 
-        private SqlDataAdapter _MainViewClassificationsAdapter;
-
-        private const string DEFAULT_CLASSIFICATION_SQL = 
-            "SELECT Classification.IdClassification as Id, Classification.Type, Concept.Name as ConceptRoot, Classification.Base " +
-            "FROM Classification " +
-            "INNER JOIN Concept ON Classification.IdConceptRoot = Concept.IdConcept;";
-
+        private int _SelectedClassificationId;
 
         public Classifications()
         {
@@ -43,50 +24,33 @@ namespace Classification.Frames
 
             Instance = this;
         }
-
         public Classifications(SQLClient client) : this()
         {
             _SQLClient = client;
 
-            DataTables.ClassificationsDataTable = new System.Data.DataTable();
+            DataTables.ClassificationsDataTable = new DataTable();
             SelectClassifications();
 
-            DataTables.ClassificationConceptsDataTable = new System.Data.DataTable();
+            DataTables.ClassificationConceptsDataTable = new DataTable();
         }
 
-        private void SelectClassifications()
-        {
-            DataTables.ClassificationsDataTable = (DataTable)_SQLClient
-                .ExecuteProcdureScalar("SelectClassificationsWithRootConcepts ", null, null);
-
-            ClassificationsDataGrid.ItemsSource = DataTables.ClassificationsDataTable?.DefaultView;
-        }
-
-        private void SelectClassificationConcepts(int classificationId)
-        {
-            DataTables.ClassificationConceptsDataTable = (DataTable)_SQLClient.ExecuteProcdureScalar(
-                "SelectConceptsOfClassification",
-                new string[] { "@ClassificationId" },
-                new object[] { classificationId }
-                );
-
-            ConceptsDataGrid.ItemsSource = DataTables.ClassificationConceptsDataTable?.DefaultView;
-        }
-
-        private void SaveConcepts_Click(object sender, RoutedEventArgs e)
-        {
-            SaveChangesToDB();
-        }
-
-        public void SaveChangesToDB()
-        {
-            _SQLClient.Update(DataTables.ClassificationsDataTable, _MainViewClassificationsAdapter);
-        }
-
-        public void RefreshClassificationsDataGrid()
+        public void SelectClassifications()
         {
             DataTables.ClassificationsDataTable.Clear();
-            SelectClassifications();
+            DataTables.ClassificationsDataTable = _SQLClient
+                .SelectClassificationsWithRootConcepts();
+
+            ClassificationsDataGrid.ItemsSource = null;
+            ClassificationsDataGrid.ItemsSource = DataTables.ClassificationsDataTable?.DefaultView;
+        }
+        public void SelectClassificationConcepts()
+        {
+            DataTables.ClassificationConceptsDataTable.Clear();
+            DataTables.ClassificationConceptsDataTable = _SQLClient
+                .SelectClassificationConcepts(_SelectedClassificationId);
+
+            ConceptsDataGrid.ItemsSource = null;
+            ConceptsDataGrid.ItemsSource = DataTables.ClassificationConceptsDataTable?.DefaultView;
         }
 
         public void ClearConceptsDataGrid()
@@ -95,27 +59,71 @@ namespace Classification.Frames
             ConceptsDataGrid.Items.Refresh();
         }
 
-        private void AddClassificationButton_Click(object sender, RoutedEventArgs e)
-        {
-            var addClassificationWindow = new Windows.AddClassificationWindow(_SQLClient);
-            addClassificationWindow.Show();
-        }
-
         private void ClassificationsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ClearConceptsDataGrid();
 
             if (ClassificationsDataGrid.SelectedItems.Count == 1)
             {
-                int id = (int)((DataRowView)ClassificationsDataGrid.SelectedItem)["Id"];
-                SelectClassificationConcepts(id);
+                _SelectedClassificationId = (int)((DataRowView)ClassificationsDataGrid.SelectedItem)["Id"];
+                SelectClassificationConcepts();
             }
         }
 
+        private void AddClassificationButton_Click(object sender, RoutedEventArgs e)
+        {
+            var addClassificationWindow = new Windows.AddClassificationWindow(_SQLClient);
+            addClassificationWindow.Show();
+        }      
+
         private void AddConceptButton_Click(object sender, RoutedEventArgs e)
         {
-            var addClassificationToConceptWindow = new Windows.AddClassificationToConceptWindow(_SQLClient);
-            addClassificationToConceptWindow.Show();
+            if (ClassificationsDataGrid.SelectedItems.Count == 1)
+            {
+                int classificationID = (int)((DataRowView)ClassificationsDataGrid.SelectedItem)["Id"];
+
+                var addClassificationToConceptWindow = new Windows.AddClassificationToConceptWindow(_SQLClient, classificationID);
+                addClassificationToConceptWindow.Show();
+            }
+            
+        }
+
+        private void AddDefinition_Click(object sender, RoutedEventArgs e)
+        {
+            if (ClassificationsDataGrid.SelectedItems.Count == 1 && ConceptsDataGrid.SelectedItems.Count == 1)
+            {
+                int classificationID = (int)((DataRowView)ClassificationsDataGrid.SelectedItem)["Id"];
+                int conceptId = (int)((DataRowView)ConceptsDataGrid.SelectedItem)["Id"];
+
+                var addDefinitionWindow = new Windows.AddDefinitionWindow(
+                    _SQLClient, classificationID, conceptId);
+
+                addDefinitionWindow.Show();
+            }
+        }
+
+        private void ChangeDefinition_Click(object sender, RoutedEventArgs e)
+        {
+            if (ClassificationsDataGrid.SelectedItems.Count == 1 && ConceptsDataGrid.SelectedItems.Count == 1)
+            {
+                int classificationID = (int)((DataRowView)ClassificationsDataGrid.SelectedItem)["Id"];
+                int conceptId = (int)((DataRowView)ConceptsDataGrid.SelectedItem)["Id"];
+
+                var changeDefinitionWindow = new Windows.ChangeDefinitionWindow(
+                    _SQLClient, classificationID, conceptId,
+                    (string)((DataRowView)ConceptsDataGrid.SelectedItem)["Definition"]);
+
+                changeDefinitionWindow.Show();
+            }
+        }
+
+        private void VisulizeConceptsTree_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataTables.ClassificationConceptsDataTable.IsInitialized)
+            {
+                var graphWindow = MainWindow.Instance.ShowGraphVisualizationWindow();
+                graphWindow.CreateGraph(Models.Concept.CreateConcepts(DataTables.ClassificationConceptsDataTable));
+            }           
         }
     }
 }

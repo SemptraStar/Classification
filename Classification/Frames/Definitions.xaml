@@ -11,34 +11,26 @@
 
 
     <Grid>
-        <DataGrid x:Name="DefinitionsDataGrid" HorizontalAlignment="Left" Height="425" Margin="50,113,0,0" VerticalAlignment="Top" Width="701" AutoGenerateColumns="False" FontSize="16">
+        <DataGrid x:Name="DefinitionsDataGrid" IsReadOnly="True" CanUserAddRows="False" HorizontalAlignment="Left" Height="425" Margin="250,108,0,0" VerticalAlignment="Top" Width="1083" AutoGenerateColumns="False" FontSize="16">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Concept}" Header="Понятие" Width="*"/>
-                <DataGridTextColumn Binding="{Binding Definition}" Header="Определение" Width="*"/>
+                <DataGridTemplateColumn Header="Определение" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock 
+                                TextAlignment="Justify"
+                                TextWrapping="Wrap"
+                                Text="{Binding Definition}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn >
                 <DataGridTextColumn Binding="{Binding Source}" Header="Источник" Width="*"/>
                 <DataGridTextColumn Binding="{Binding Page}" Header="Страница" Width="*"/>
             </DataGrid.Columns>
         </DataGrid>
-        <Button x:Name="SaveDefinitions" Content="Сохранить" HorizontalAlignment="Left" Margin="50,562,0,0" VerticalAlignment="Top" Width="150" Height="38" FontSize="16" Click="SaveConcepts_Click"/>
-        <TextBlock HorizontalAlignment="Left" Margin="200,11,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="30" Height="36" Width="230" Text="Определения"/>
-        <DataGrid x:Name="ConceptsQueryTable" CanUserSortColumns="False" IsReadOnly="True"  HorizontalAlignment="Left" Height="425" Margin="775,113,0,0" VerticalAlignment="Top" Width="701" AutoGenerateColumns="False" FontSize="16">
-            <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Name}" Header="Name" Width="3*"/>
-            </DataGrid.Columns>
-        </DataGrid>
-        <TextBlock HorizontalAlignment="Left" Margin="869,44,0,0" TextWrapping="Wrap" Text="Concept query table" VerticalAlignment="Top" FontSize="30" Height="36" Width="300"/>
-        <TextBox x:Name="SelectTextBox" FontSize="16" HorizontalAlignment="Left" Height="24" Margin="832,576,0,0" TextWrapping="Wrap" Text="" TextAlignment="Left" VerticalAlignment="Top" Width="528"/>
-        <TextBlock HorizontalAlignment="Left" Margin="775,543,0,0" TextWrapping="Wrap" Text="Query" VerticalAlignment="Top" FontSize="20" Height="36" Width="300"/>
-        <Button x:Name="ExecQueryButton" Content="Execute" HorizontalAlignment="Left" Margin="773,663,0,0" VerticalAlignment="Top" Width="150" Height="38" FontSize="16" Click="ExecQueryButton_Click"/>
-        <TextBlock HorizontalAlignment="Left" Margin="775,576,0,0" TextWrapping="Wrap" Text="SELECT" VerticalAlignment="Top" FontSize="16" Height="24" Width="52"/>
-        <TextBlock HorizontalAlignment="Left" Margin="1365,576,0,0" TextWrapping="Wrap" Text="FROM Concept" VerticalAlignment="Top" FontSize="16" Height="24" Width="111"/>
-        <TextBlock HorizontalAlignment="Left" Margin="773,605,0,0" TextWrapping="Wrap" Text="WHERE" VerticalAlignment="Top" FontSize="16" Height="24" Width="59"/>
-        <TextBox x:Name="WhereTextBox"  FontSize="16" HorizontalAlignment="Left" Height="24" Margin="832,605,0,0" TextWrapping="Wrap" Text="" TextAlignment="Left" VerticalAlignment="Top" Width="644"/>
-        <TextBlock HorizontalAlignment="Left" Margin="773,634,0,0" TextWrapping="Wrap" Text="ORDER BY" VerticalAlignment="Top" FontSize="16" Height="24" Width="75"/>
-        <TextBox x:Name="OrderByTextBox"  FontSize="16" HorizontalAlignment="Left" Height="24" Margin="853,634,0,0" TextWrapping="Wrap" Text="" TextAlignment="Left" VerticalAlignment="Top" Width="623"/>
-        <TextBlock HorizontalAlignment="Left" Margin="1481,634,0,0" TextWrapping="Wrap" Text=";" VerticalAlignment="Top" FontSize="16" Height="24" Width="19"/>
-        <TextBlock HorizontalAlignment="Left" FontSize="18" Margin="51,75,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="24" Width="133"><Run Text="Классификация"/><LineBreak/><Run/></TextBlock>
-        <ComboBox x:Name="ClassificationsComboBox" HorizontalAlignment="Left" Margin="189,77,0,0" VerticalAlignment="Top" Width="237" SelectionChanged="ClassificationsComboBox_SelectionChanged"/>
+        <TextBlock HorizontalAlignment="Left" TextAlignment="Center" Margin="251,6,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="30" Height="36" Width="1082" Text="Определения"/>
+        <TextBlock HorizontalAlignment="Left" FontSize="18" Margin="251,70,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="24" Width="133"><Run Text="Классификация"/><LineBreak/><Run/></TextBlock>
+        <ComboBox x:Name="ClassificationsComboBox" HorizontalAlignment="Left" Margin="389,72,0,0" VerticalAlignment="Top" Width="237" SelectionChanged="ClassificationsComboBox_SelectionChanged"/>
 
     </Grid>
 </Page>

@@ -34,6 +34,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GraphSharp">
+      <HintPath>..\..\Graph#\Release\GraphSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="GraphSharp.Controls">
+      <HintPath>..\..\Graph#\Release\GraphSharp.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph">
+      <HintPath>..\..\Graph#\Release\QuickGraph.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
@@ -49,15 +58,15 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WPFExtensions">
+      <HintPath>..\..\Graph#\Release\WPFExtensions.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Frames\ClassificationsToConcept.xaml.cs">
-      <DependentUpon>ClassificationsToConcept.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Frames\Classifications.xaml.cs">
       <DependentUpon>Classifications.xaml</DependentUpon>
     </Compile>
@@ -73,25 +82,40 @@
     <Compile Include="Frames\Sources.xaml.cs">
       <DependentUpon>Sources.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Graphs\GraphVisualizationWindow.xaml.cs">
+      <DependentUpon>GraphVisualizationWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Graphs\TreeVisualizationPage.xaml.cs">
+      <DependentUpon>TreeVisualizationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Classification.cs" />
+    <Compile Include="Models\Concept.cs" />
     <Compile Include="Utility\SQL\SQLClient.cs" />
     <Compile Include="Utility\SQL\DataTables.cs" />
-    <Compile Include="Utility\SQL\SqlQuerySyntaxException.cs" />
     <Compile Include="Windows\AddClassificationToConceptWindow.xaml.cs">
       <DependentUpon>AddClassificationToConceptWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\ChangeDefinitionWindow.xaml.cs">
+      <DependentUpon>ChangeDefinitionWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\ChangeSourceWIndow.xaml.cs">
+      <DependentUpon>ChangeSourceWIndow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\AddSourceWIndow.xaml.cs">
+      <DependentUpon>AddSourceWIndow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\AddDefinitionWindow.xaml.cs">
+      <DependentUpon>AddDefinitionWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\AddPropertyWindow.xaml.cs">
       <DependentUpon>AddPropertyWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\ChangePropertyWindow.xaml.cs">
+      <DependentUpon>ChangePropertyWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\AddClassificationWindow.xaml.cs">
       <DependentUpon>AddClassificationWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\ViewConceptsOfClassification.xaml.cs">
-      <DependentUpon>ViewConceptsOfClassification.xaml</DependentUpon>
-    </Compile>
-    <Page Include="Frames\ClassificationsToConcept.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Frames\Classifications.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -112,6 +136,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Graphs\GraphVisualizationWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Graphs\TreeVisualizationPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -128,15 +160,31 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Windows\ChangeDefinitionWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\ChangeSourceWIndow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\AddSourceWIndow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\AddDefinitionWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Windows\AddPropertyWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Windows\AddClassificationWindow.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Windows\ChangePropertyWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
-    <Page Include="Windows\ViewConceptsOfClassification.xaml">
+    <Page Include="Windows\AddClassificationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

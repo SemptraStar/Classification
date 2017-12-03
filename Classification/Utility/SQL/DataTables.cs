@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data.SqlClient;
-using System.Data;
+﻿using System.Data;
 
 namespace Classification.Utility.SQL
 {
@@ -14,7 +8,7 @@ namespace Classification.Utility.SQL
         public static DataTable ClassificationConceptsDataTable;
 
         public static DataTable ConceptsDataTable;
-        public static DataTable ConceptsQueryDataTable;
+        public static DataTable ConceptChildsDataTable;
 
         public static DataTable ClassificationsToConceptsDataTable;
         public static DataTable ClassificationsToConceptsQueryDataTable;

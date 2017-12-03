@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 
 using Classification.Utility.SQL;
 using System.Data.SqlClient;
+using System.Data;
 
 namespace Classification.Frames
 {
@@ -26,8 +27,9 @@ namespace Classification.Frames
     {
         private readonly SQLClient _SQLClient;
 
-        private SqlDataAdapter _MainViewConceptsAdapter;
-        private SqlDataAdapter _QueryConceptsAdapter;
+        private int? _selectedConceptId = null;
+        private int? _selectedClassificationId = null;
+        private int _selectedConceptsType = 0;
 
         public Concepts()
         {
@@ -38,46 +40,86 @@ namespace Classification.Frames
         {
             _SQLClient = client;
 
-            DataTables.ConceptsDataTable = new System.Data.DataTable();
-            _SQLClient.Select(DataTables.ConceptsDataTable, ref _MainViewConceptsAdapter, new string[] { "Concept" }, new string[] { "*" });
-            ConceptsDataGrid.ItemsSource = DataTables.ConceptsDataTable?.DefaultView;
+            DataTables.ConceptsDataTable = new DataTable();
+            SelectConcepts();
 
-            DataTables.ConceptsQueryDataTable = new System.Data.DataTable();
-            ConceptsQueryTable.ItemsSource = DataTables.ConceptsQueryDataTable?.DefaultView;
+            DataTables.ConceptChildsDataTable = new DataTable();
+            ConceptChildsDataGrid.ItemsSource = DataTables.ConceptChildsDataTable?.DefaultView;
+
+            SelectClassifications();
         }
 
-        private void SaveConcepts_Click(object sender, RoutedEventArgs e)
+        private void SelectConcepts()
         {
-            _SQLClient.Update(DataTables.ConceptsDataTable, _MainViewConceptsAdapter);
+            DataTables.ConceptsDataTable.Clear();
+            DataTables.ConceptsDataTable = _SQLClient.SelectConcepts();
+
+            ConceptsDataGrid.ItemsSource = null;
+            ConceptsDataGrid.ItemsSource = DataTables.ConceptsDataTable.DefaultView;
+        }
+        private void SelectClassifications()
+        {
+            DataTable dataTable = _SQLClient.SelectClassifications();
+            List<string> classifications = new List<string>();
+
+            foreach (DataRow row in dataTable.Rows)
+            {
+                classifications.Add(row["Id"].ToString().Trim() + 
+                    ". Основание: " + row["Base"].ToString().Trim() + 
+                    "; Тип: " + row["Type"].ToString().Trim());
+            }
+
+            ClassificationsComboBox.ItemsSource = null;
+            ClassificationsComboBox.ItemsSource = classifications;
+        }
+        private void SelectClassificationConcepts(int conceptId, int classificationId)
+        {
+            DataTables.ConceptChildsDataTable = _selectedConceptsType == 0 ?
+                _SQLClient.SelectConceptChilds(conceptId, classificationId) :
+                _SQLClient.SelectConceptParents(conceptId, classificationId);
+
+            ConceptChildsDataGrid.ItemsSource = DataTables.ConceptChildsDataTable?.DefaultView;
         }
 
-        private void ExecQueryButton_Click(object sender, RoutedEventArgs e)
+        private void ClassificationsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            DataTables.ConceptsQueryDataTable?.Clear();
+            _selectedClassificationId = int.Parse(ClassificationsComboBox.SelectedItem.ToString().Split('.')[0]);
+            DisplayConceptChilds();
+        }
 
-            string sql_query = "SELECT ";
-
-            if (SelectTextBox.Text != "")
-                sql_query += SelectTextBox.Text;
-
-            sql_query += " FROM Concept";
-
-            if (WhereTextBox.Text != "")
-                sql_query += " WHERE " + WhereTextBox.Text;
-
-            if (OrderByTextBox.Text != "")
-                sql_query += " ORDER BY " + OrderByTextBox.Text;
-
-            sql_query += ";";
-
-            try
+        private void ConceptsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ConceptsDataGrid.SelectedItems.Count == 1)
             {
-                _SQLClient.Select(DataTables.ConceptsQueryDataTable, ref _QueryConceptsAdapter, sql_query);
+                _selectedConceptId = (int)((DataRowView)ConceptsDataGrid.SelectedItem)["Id"];
+                DisplayConceptChilds();
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show(ex.Message);
+                _selectedConceptId = null;
             }
+        }
+
+        private void DisplayConceptChilds()
+        {
+            if (_selectedClassificationId != null && _selectedConceptId != null)
+            {
+                ClearConceptChildsDataGrid();
+
+                SelectClassificationConcepts((int)_selectedConceptId, (int)_selectedClassificationId);
+            }
+        }
+
+        public void ClearConceptChildsDataGrid()
+        {
+            DataTables.ConceptChildsDataTable.Clear();
+            ConceptChildsDataGrid.Items.Refresh();
+        }
+
+        private void ConceptsTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            _selectedConceptsType = ConceptsTypeComboBox.SelectedIndex;
+            DisplayConceptChilds();
         }
     }
 }

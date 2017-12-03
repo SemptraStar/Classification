@@ -15,53 +15,44 @@ using System.Windows.Shapes;
 using Classification.Utility.SQL;
 using System.Data;
 using System.Data.SqlClient;
+using System.Text.RegularExpressions;
 
 namespace Classification.Windows
 {
     /// <summary>
     /// Логика взаимодействия для AddClassificatonWindow.xaml
     /// </summary>
-    public partial class AddPropertyWindow : Window
+    public partial class AddSourceWindow : Window
     {
         private readonly SQLClient _SQLClient;
 
-        public AddPropertyWindow()
+        public AddSourceWindow()
         {
             InitializeComponent();
         }
 
-        public AddPropertyWindow(SQLClient client) : this()
+        public AddSourceWindow(SQLClient client) : this()
         {
             _SQLClient = client;
-
-            GetConceptsList();
         }
 
-        private void GetConceptsList()
+        private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
         {
-            DataTable dataTable = _SQLClient.SelectConcepts();
-            List<string> concepts = new List<string>();
-
-            foreach(DataRow row in dataTable.Rows)
-            {
-                concepts.Add(
-                    row["Id"].ToString() + ". " + 
-                    row["Name"].ToString().Trim()
-                    );
-            }
-
-            ConceptsRootComboBox.ItemsSource = concepts;
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
         }
 
-        private void AddPropertyButton_Click(object sender, RoutedEventArgs e)
+        private void AddSourceButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                _SQLClient.InsertProperty(
-                    PropertyNameTextBox.Text,
-                    int.Parse(ConceptsRootComboBox.Text.Split('.')[0]),
-                    PropertyMeasureTextBox.Text
+                _SQLClient.InsertSource(
+                        SourceNameTextBox.Text,
+                        SourceAuthorTextBox.Text,
+                        int.Parse(SourceYearTextBox.Text)
                     );
+
+                Frames.Sources.Instance.SelectSources();
             }
             catch (Exception ex)
             {

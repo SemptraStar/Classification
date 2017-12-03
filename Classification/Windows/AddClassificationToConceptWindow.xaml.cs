@@ -25,83 +25,75 @@ namespace Classification.Windows
     {
         private readonly SQLClient _SQLClient;
 
-        private int classificationId = 0;
+        private int _SelectedClassificationId = -1;
+        private int _SelectedConceptId = -1;
+        private int _SelectedParentConceptId = -1;
 
         public AddClassificationToConceptWindow()
         {
             InitializeComponent();
         }
-
         public AddClassificationToConceptWindow(SQLClient client) : this()
         {
             _SQLClient = client;
 
             SelectClassifications();
         }
+        public AddClassificationToConceptWindow(SQLClient client, int selectedClassificationId) : this(client)
+        {
+            _SelectedClassificationId = selectedClassificationId;
+
+            ClassificationsComboBox.SelectedIndex = ClassificationsComboBox
+                .Items.OfType<string>().ToList()
+                .FindIndex(item =>
+                int.Parse(item.Split('.').First()) == _SelectedClassificationId);
+        }
 
         private void SelectClassifications()
         {
-            SqlDataAdapter adapter = new SqlDataAdapter();
-            DataTable tempDT = new DataTable();
-            _SQLClient.Select(tempDT, ref adapter, "SELECT " +
-                "Classification.IdClassification as Id, Classification.Base as Base, Classification.Type as Type " +
-                "FROM Classification;");
-                
+            DataTable dataTable = _SQLClient.SelectClassifications();
             List<string> classifications = new List<string>();
 
-            foreach (DataRow row in tempDT.Rows)
+            foreach (DataRow row in dataTable.Rows)
             {
-                classifications.Add(row["Id"].ToString().Trim() + ". Base: " + row["Base"].ToString().Trim() + "; Type: " + row["Type"].ToString().Trim());
+                classifications.Add(row["Id"].ToString().Trim() +
+                    ". Основание: " + row["Base"].ToString().Trim() +
+                    "; Тип: " + row["Type"].ToString().Trim());
             }
 
             ClassificationsComboBox.ItemsSource = null;
             ClassificationsComboBox.ItemsSource = classifications;
         }
-
-        private void SelectConcepts()
+        private void SelectConceptsOutsideClassification()
         {
-            SqlDataAdapter adapter = new SqlDataAdapter();
-            DataTable tempDT = new DataTable();
-
-            _SQLClient.Select(tempDT, ref adapter, 
-                String.Format(
-                "SELECT Concept.IdConcept as Id, Concept.Name as Name " +
-                "FROM Concept " +
-                "WHERE Concept.IdConcept NOT IN " +
-                "(SELECT ClassificationToConcept.IdConcept " +
-                "FROM ClassificationToConcept " +
-                "WHERE ClassificationToConcept.IdClassification = {0});", classificationId));
+            DataTable dataTable = _SQLClient
+                .SelectConceptsOutsideClassification(_SelectedClassificationId);
 
             List <string> concepts = new List<string>();
 
-            foreach (DataRow row in tempDT.Rows)
+            foreach (DataRow row in dataTable.Rows)
             {
-                concepts.Add(row["Id"].ToString().Trim() + ". " + row["Name"].ToString().Trim());
+                concepts.Add(
+                    row["Id"].ToString().Trim() + ". " + 
+                    row["Name"].ToString().Trim());
             }
 
             ConceptsComboBox.ItemsSource = null;
             ConceptsComboBox.ItemsSource = concepts;
         }
-
-        private void SelectParentConcepts()
+        private void SelectConceptsFromClassification()
         {
-            SqlDataAdapter adapter = new SqlDataAdapter();
-            DataTable tempDT = new DataTable();
-
-            _SQLClient.Select(tempDT, ref adapter,
-                String.Format(
-                "SELECT Concept.IdConcept as Id, Concept.Name as Name " +
-                "FROM Concept " +
-                "WHERE Concept.IdConcept IN " +
-                "(SELECT ClassificationToConcept.IdConcept " +
-                "FROM ClassificationToConcept " +
-                "WHERE ClassificationToConcept.IdClassification = {0});", classificationId));
+            DataTable dataTable = _SQLClient
+                .SelectClassificationConceptsRaw(_SelectedClassificationId);
 
             List<string> parents = new List<string>();
 
-            foreach (DataRow row in tempDT.Rows)
+            foreach (DataRow row in dataTable.Rows)
             {
-                parents.Add(row["Id"].ToString().Trim() + ". " + row["Name"].ToString().Trim());
+                parents.Add(
+                    row["Id"].ToString().Trim() + ". " + 
+                    row["Name"].ToString().Trim()
+                    );
             }
 
             ParentConceptComboBox.ItemsSource = null;
@@ -110,13 +102,57 @@ namespace Classification.Windows
 
         private void ClassificationsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            classificationId = int.Parse(ClassificationsComboBox.SelectedItem.ToString().Split('.')[0]);
-            SelectConcepts();
+            _SelectedClassificationId = int.Parse(ClassificationsComboBox.SelectedItem.ToString().Split('.')[0]);
+            SelectConceptsOutsideClassification();
+            SelectConceptsFromClassification();
         }
-
         private void ConceptsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            SelectParentConcepts();
+            if (ConceptsComboBox.SelectedIndex != -1)
+            {
+                _SelectedConceptId = int.Parse(
+                    ConceptsComboBox
+                        .SelectedItem
+                        .ToString()
+                        .Split('.')[0]
+                    );
+            }      
         }
+        private void ParentConceptComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ParentConceptComboBox.SelectedIndex != -1)
+            {
+                _SelectedParentConceptId = int.Parse(
+                    ParentConceptComboBox
+                        .SelectedItem
+                        .ToString()
+                        .Split('.')[0]
+                    );
+            }         
+        }
+
+        private void AddClassificationToPropertyButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (ClassificationsComboBox.SelectedIndex < 0 || 
+                    ConceptsComboBox.SelectedIndex < 0 ||
+                    ParentConceptComboBox.SelectedIndex < 0)
+                    return;
+
+                _SQLClient.InsertConceptToClassification(
+                    _SelectedClassificationId,
+                    _SelectedConceptId,
+                    _SelectedParentConceptId,
+                    SpeciesDifferenceTextBox.Text
+                    );
+
+                Frames.Classifications.Instance.SelectClassificationConcepts();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка");
+            }
+        } 
     }
 }
