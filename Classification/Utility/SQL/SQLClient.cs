@@ -144,6 +144,22 @@ namespace Classification.Utility.SQL
                 "ON Property.IdConceptRoot = Concept.IdConcept;"
                 );
         }
+        public DataTable SelectConceptProperties(int conceptId)
+        {
+            return ExecuteSelectProcedure(
+              "SelectConceptProperties",
+              new string[] { "@ConceptId" },
+              new object[] { conceptId }
+              );
+        }
+        public DataTable SelectPropertyArousedConcepts(int conceptId)
+        {
+            return ExecuteSelectProcedure(
+              "SelectPropertyArousedConcepts",
+              new string[] { "@ConceptId" },
+              new object[] { conceptId }
+              );
+        }
         public DataTable SelectSources()
         {
             return SelectQuery(

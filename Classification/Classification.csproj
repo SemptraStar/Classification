@@ -15,7 +15,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -82,14 +82,16 @@
     <Compile Include="Frames\Sources.xaml.cs">
       <DependentUpon>Sources.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Graphs\GraphVisualizationWindow.xaml.cs">
-      <DependentUpon>GraphVisualizationWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Graphs\TreeVisualizationPage.xaml.cs">
       <DependentUpon>TreeVisualizationPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\Classification.cs" />
     <Compile Include="Models\Concept.cs" />
+    <Compile Include="Models\ConceptGraphViewModel.cs" />
+    <Compile Include="Models\GraphSharp\ConceptEdge.cs" />
+    <Compile Include="Models\GraphSharp\ConceptGraph.cs" />
+    <Compile Include="Models\GraphSharp\ConceptGraphLayout.cs" />
+    <Compile Include="Models\GraphSharp\ConceptVertex.cs" />
     <Compile Include="Utility\SQL\SQLClient.cs" />
     <Compile Include="Utility\SQL\DataTables.cs" />
     <Compile Include="Windows\AddClassificationToConceptWindow.xaml.cs">
@@ -133,10 +135,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Frames\Sources.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Graphs\GraphVisualizationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

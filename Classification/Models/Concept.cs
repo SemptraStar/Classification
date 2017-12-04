@@ -13,6 +13,7 @@ namespace Classification.Models
         public string Name { get; set; }
         public string SpeciesDifference { get; set; }
         public string Definition { get; set; }
+        public string Source { get; set; }
         public int? ParentConceptId { get; set; }
         public int Level { get; set; }
 
@@ -24,6 +25,7 @@ namespace Classification.Models
                 Name = conceptDataRow.Field<string>("Name")?.Trim(),
                 SpeciesDifference = conceptDataRow.Field<string>("SpecDifference")?.Trim(),
                 Definition = conceptDataRow.Field<string>("Definition")?.Trim(),
+                Source = conceptDataRow.Field<string>("Source").Trim(),
                 ParentConceptId = conceptDataRow.Field<int?>("ParentId"),
                 Level = conceptDataRow.Field<int>("Level")
             };
@@ -47,7 +49,7 @@ namespace Classification.Models
 
         public override string ToString()
         {
-            return $"{Name}\n{Definition}";
+            return Name;
         }
     }
 }

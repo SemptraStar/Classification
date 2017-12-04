@@ -53,7 +53,6 @@
         <Button x:Name="AddConceptButton" Content="Добавить понятие в классификацию" HorizontalAlignment="Left" Margin="231,562,0,0" VerticalAlignment="Top" Width="285" Height="38" FontSize="16" Click="AddConceptButton_Click"/>
         <Button x:Name="AddDefinition" Content="Добавить определение к понятию" HorizontalAlignment="Left" Margin="652,562,0,0" VerticalAlignment="Top" Width="270" Height="38" FontSize="16" Click="AddDefinition_Click"/>
         <Button x:Name="ChangeDefinition" Content="Изменить определение понятия" HorizontalAlignment="Left" Margin="652,605,0,0" VerticalAlignment="Top" Width="270" Height="38" FontSize="16" Click="ChangeDefinition_Click"/>
-        <Button x:Name="VisulizeConceptsTree" Content="Показать граф классификации" HorizontalAlignment="Left" Margin="22,606,0,0" VerticalAlignment="Top" Width="241" Height="38" FontSize="16" Click="VisulizeConceptsTree_Click"/>
 
     </Grid>
 </Page>

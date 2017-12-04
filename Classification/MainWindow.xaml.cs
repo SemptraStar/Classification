@@ -33,7 +33,6 @@ namespace Classification
         private Frames.Properties _PropertiesPage;
         private Frames.Definitions _DefinitionsPage;
         private Frames.Sources _SourcePage;
-        private Graphs.GraphVisualizationWindow _GraphVisualizationWindow;
         private Graphs.TreeVisualizationPage _TreeVisualizationPage;
 
         public MainWindow()
@@ -56,13 +55,6 @@ namespace Classification
             _DefinitionsPage = new Frames.Definitions(_SQLClient);
             _SourcePage = new Frames.Sources(_SQLClient);
             _TreeVisualizationPage = new Graphs.TreeVisualizationPage(_SQLClient);
-        }
-
-        public Graphs.GraphVisualizationWindow ShowGraphVisualizationWindow()
-        {
-            _GraphVisualizationWindow = new Graphs.GraphVisualizationWindow();
-            _GraphVisualizationWindow.Show();
-            return _GraphVisualizationWindow;
         }
 
         private void ClassificationsOpen_Click(object sender, RoutedEventArgs e)

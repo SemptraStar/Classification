@@ -4,21 +4,64 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Classification.Graphs"
+      xmlns:customGraphs="clr-namespace:Classification.Models.GraphSharp"
       xmlns:graphsharp="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
+      xmlns:zoom="clr-namespace:WPFExtensions.Controls;assembly=WPFExtensions" 
       xmlns:tree="clr-namespace:GraphSharp.Algorithms.Layout.Simple.Tree;assembly=GraphSharp"
       mc:Ignorable="d" 
-      d:DesignHeight="1080" d:DesignWidth="1920"
+      d:DesignHeight="800" d:DesignWidth="1600"
       Title="TreeVisualizationPage"
       x:Name="root">
 
+    <Page.Resources>
+        <DataTemplate x:Key="ConceptVertexTemplate" DataType="{x:Type customGraphs:ConceptVertex}">
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <TextBlock Text="{Binding Path=Concept.Name, Mode=OneWay}" FontWeight="Light" Foreground="Black" />
+            </StackPanel>
+        </DataTemplate>
+
+        <Style TargetType="{x:Type graphsharp:VertexControl}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type graphsharp:VertexControl}">
+                        <Border x:Name="VertexBorder" 
+                                    BorderBrush="Black" 
+                                    Background="White"
+							        BorderThickness="1"
+							        CornerRadius="10,10,10,10"
+							        Padding="{TemplateBinding Padding}">
+
+                            <StackPanel Orientation="Vertical">
+                                <ContentPresenter Content="{TemplateBinding Vertex}" 
+                                            ContentTemplate="{StaticResource ConceptVertexTemplate}"/>
+                            </StackPanel>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+    </Page.Resources>
+
     <Grid>
-        <graphsharp:GraphLayout x:Name="MainGraphLayout" Graph="{Binding ElementName=root, Path=ClassificationTree}"
-            LayoutAlgorithmType="EfficientSugiyama" OverlapRemovalAlgorithmType="FDA" EdgeRoutingAlgorithmType="" HighlightAlgorithmType="Simple" RenderTransformOrigin="0.5,0.5" Margin="0,89,0,0">
-            <graphsharp:GraphLayout.LayoutParameters>
-                <tree:SimpleTreeLayoutParameters Direction="BottomToTop"></tree:SimpleTreeLayoutParameters>
-            </graphsharp:GraphLayout.LayoutParameters>
-        </graphsharp:GraphLayout>
-        <TextBlock HorizontalAlignment="Left" FontSize="16" Margin="51,33,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="24" Width="123"><Run Text="Классификация"/><LineBreak/><Run/></TextBlock>
-        <ComboBox x:Name="ClassificationsComboBox" HorizontalAlignment="Left" Margin="180,36,0,0" VerticalAlignment="Top" Width="237" SelectionChanged="ClassificationsComboBox_SelectionChanged"/>
+        <zoom:ZoomControl x:Name="ZoomControl" BorderBrush="Black" BorderThickness="1" Zoom="0.2" ZoomBoxOpacity="0.5" Margin="0,33,583,205">
+            <customGraphs:ConceptGraphLayout x:Name="graphLayout" Margin="10"
+						Graph="{Binding Path=Graph}"
+						LayoutAlgorithmType="EfficientSugiyama"
+						OverlapRemovalAlgorithmType="FSA"
+						HighlightAlgorithmType="Simple" />
+        </zoom:ZoomControl>
+
+        <TextBlock HorizontalAlignment="Left" FontSize="16" Margin="10,9,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="24" Width="123"><Run Text="Классификация"/><LineBreak/><Run/></TextBlock>
+        <ComboBox x:Name="ClassificationsComboBox" HorizontalAlignment="Left" Margin="138,9,0,0" VerticalAlignment="Top" Width="237" SelectionChanged="ClassificationsComboBox_SelectionChanged"/>
+        <TextBlock x:Name="ConceptLabel" HorizontalAlignment="Left" FontSize="16" Margin="1102,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="24" Width="231" Text=""/>
+        <TextBlock x:Name="ConceptDefinitionLabel" HorizontalAlignment="Left" FontSize="14" Margin="1022,231,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="126" Width="311" Text=""/>
+        <TextBlock x:Name="ConceptSpecDifferenceLabel" HorizontalAlignment="Left" FontSize="14" Margin="1022,68,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="129" Width="311"/>
+        <TextBlock x:Name="ConceptLabel_Copy" HorizontalAlignment="Left" FontSize="16" Margin="1022,202,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="24" Width="170"><Run Text="Определение"/><Run Text=":"/></TextBlock>
+        <TextBlock x:Name="ConceptLabel_Copy1" HorizontalAlignment="Left" FontSize="16" Margin="1022,39,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="24" Width="170"><Run Text="Видовое"/><Run Text=" отличие"/><Run Text=":"/></TextBlock>
+        <TextBlock x:Name="ConceptLabel_Copy2" HorizontalAlignment="Left" FontSize="16" Margin="1022,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="24" Width="75"><Run Text="Понятие"/><Run Text=":"/></TextBlock>
+        <TextBlock x:Name="ConceptLabel_Copy3" HorizontalAlignment="Left" FontSize="16" Margin="1022,362,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="24" Width="170"><Run Text="Источник"/><Run Text=":"/></TextBlock>
+        <TextBlock x:Name="SourceLabel" HorizontalAlignment="Left" FontSize="14" Margin="1022,391,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="24" Width="311" Text=""/>
     </Grid>
 </Page>

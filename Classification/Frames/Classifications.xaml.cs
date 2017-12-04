@@ -116,14 +116,5 @@ namespace Classification.Frames
                 changeDefinitionWindow.Show();
             }
         }
-
-        private void VisulizeConceptsTree_Click(object sender, RoutedEventArgs e)
-        {
-            if (DataTables.ClassificationConceptsDataTable.IsInitialized)
-            {
-                var graphWindow = MainWindow.Instance.ShowGraphVisualizationWindow();
-                graphWindow.CreateGraph(Models.Concept.CreateConcepts(DataTables.ClassificationConceptsDataTable));
-            }           
-        }
     }
 }
