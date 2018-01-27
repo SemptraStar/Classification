@@ -11,7 +11,7 @@
 
 
     <Grid RenderTransformOrigin="0.428,0.564">
-        <DataGrid x:Name="PropertiesDataGrid" HorizontalAlignment="Left" IsReadOnly="True" CanUserAddRows="False" Height="425" Margin="312,92,0,0" VerticalAlignment="Top" Width="1063" AutoGenerateColumns="False" FontSize="16">
+        <DataGrid x:Name="PropertiesDataGrid" HorizontalAlignment="Left" IsReadOnly="True" CanUserAddRows="False" Height="425" Margin="72,87,0,0" VerticalAlignment="Top" Width="786" AutoGenerateColumns="False" FontSize="16" SelectionChanged="PropertiesDataGrid_SelectionChanged">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Id}" Header="Id" Width="0.2*"/>
                 <DataGridTextColumn Binding="{Binding Name}" Header="Понятие" Width="*"/>
@@ -19,10 +19,17 @@
                 <DataGridTextColumn Binding="{Binding Measure}" Header="Измерение" Width="*"/>
             </DataGrid.Columns>
         </DataGrid>
-        <Button x:Name="ChangeConcept" Content="Изменить" HorizontalAlignment="Left" Margin="469,522,0,0" VerticalAlignment="Top" Width="150" Height="38" FontSize="16" Click="ChangeConcepts_Click"/>
-        <TextBlock TextAlignment="Center" HorizontalAlignment="Left" Margin="312,29,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="30" Height="36" Width="1063" Text="Свойства"/>
-        <Button x:Name="AddProperty" Content="Добавить" HorizontalAlignment="Left" Margin="314,522,0,0" VerticalAlignment="Top" Width="150" Height="38" FontSize="16" Click="AddProperty_Click"/>
-        <Button x:Name="DeleteProperty" Content="Удалить" HorizontalAlignment="Left" Margin="624,522,0,0" VerticalAlignment="Top" Width="150" Height="38" FontSize="16" Click="DeleteProperty_Click"/>
+        <Button x:Name="ChangeConcept" Content="Изменить" HorizontalAlignment="Left" Margin="229,517,0,0" VerticalAlignment="Top" Width="150" Height="38" FontSize="16" Click="ChangeConcepts_Click"/>
+        <TextBlock TextAlignment="Center" HorizontalAlignment="Left" Margin="72,31,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="30" Height="51" Width="784" Text="Свойства"/>
+        <Button x:Name="AddProperty" Content="Добавить" HorizontalAlignment="Left" Margin="74,517,0,0" VerticalAlignment="Top" Width="150" Height="38" FontSize="16" Click="AddProperty_Click"/>
+        <Button x:Name="DeleteProperty" Content="Удалить" HorizontalAlignment="Left" Margin="384,517,0,0" VerticalAlignment="Top" Width="150" Height="38" FontSize="16" Click="DeleteProperty_Click"/>
+        <TextBlock TextAlignment="Center" HorizontalAlignment="Left" Margin="863,31,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="30" Height="51" Width="625" Text="Понятия, на основе которых возникли"/>
+        <DataGrid x:Name="PropertyArousedConceptsDataGrid" HorizontalAlignment="Left" IsReadOnly="True" CanUserAddRows="False" Height="425" Margin="863,87,0,0" VerticalAlignment="Top" Width="625" AutoGenerateColumns="False" FontSize="16">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Id}" Header="Id" Width="0.1*"/>
+                <DataGridTextColumn Binding="{Binding Name}" Header="Понятие" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
 
     </Grid>
 </Page>

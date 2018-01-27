@@ -1,12 +1,15 @@
 ﻿using System.Data.SqlClient;
 using System.Data;
 using System.Configuration;
+using System;
+using System.IO;
 
 namespace Classification.Utility.SQL
 {
-    public class SQLClient
+    public class SQLClient : IDisposable
     {
         public static string ConnectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+           
 
         public SqlConnection Connection;
 
@@ -72,6 +75,13 @@ namespace Classification.Utility.SQL
                 "FROM Classification;"
                 );
         }
+        public DataTable SelectClassificationsTypes()
+        {
+            return SelectQuery(
+                "SELECT DISTINCT Classification.Type FROM Classification;"
+                );
+        }
+
         public DataTable SelectConcepts()
         {
             return SelectQuery(
@@ -103,6 +113,15 @@ namespace Classification.Utility.SQL
                 new object[] { conceptId, classificationId }
                 );
         }
+        public DataTable SelectConceptISAClassifcations(int conceptId)
+        {
+            return ExecuteSelectProcedure(
+                "SelectConceptISAClassifcations",
+                new string[] { "@ConceptId"},
+                new object[] { conceptId }
+                );
+        }
+
         public DataTable SelectClassificationConcepts(int classificationId)
         {
             return ExecuteSelectProcedure(
@@ -135,6 +154,7 @@ namespace Classification.Utility.SQL
                null
                );
         }
+
         public DataTable SelectProperties()
         {
             return SelectQuery(
@@ -152,14 +172,23 @@ namespace Classification.Utility.SQL
               new object[] { conceptId }
               );
         }
-        public DataTable SelectPropertyArousedConcepts(int conceptId)
+        public DataTable SelectPropertyArousedConcepts(int propertyId)
         {
             return ExecuteSelectProcedure(
               "SelectPropertyArousedConcepts",
+              new string[] { "@PropertyId" },
+              new object[] { propertyId }
+              );
+        }
+        public DataTable SelectPropertiesNotOfConcept(int conceptId)
+        {
+            return ExecuteSelectProcedure(
+              "SelectPropertiesNotOfConcept",
               new string[] { "@ConceptId" },
               new object[] { conceptId }
               );
         }
+
         public DataTable SelectSources()
         {
             return SelectQuery(
@@ -167,6 +196,7 @@ namespace Classification.Utility.SQL
                " FROM Source;"
                );
         }
+
         public DataTable SelectSourceDefinitions(int sourceId)
         {
             return ExecuteSelectProcedure(
@@ -239,6 +269,29 @@ namespace Classification.Utility.SQL
                 }
             }
         }
+        public int ExecuteProcedureIdentity(string procedure, string[] parameters, object[] values)
+        {
+            using (SqlCommand command = new SqlCommand(procedure, Connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+
+                for (int i = 0; i < parameters?.Length; i++)
+                {
+                    command.Parameters.AddWithValue(parameters[i], values[i]);
+                }
+
+                try
+                {
+                    Connection.Open();
+
+                    return (int)command.ExecuteScalar();
+                }
+                finally
+                {
+                    Connection.Close();
+                }
+            }
+        }
 
         public void InsertClassification(string type, int conceptRootId, string classificationBase)
         {
@@ -250,6 +303,14 @@ namespace Classification.Utility.SQL
                         conceptRootId,
                         classificationBase
                     });
+        }
+        public void InsertConcept(string name)
+        {
+            ExecuteProcedure(
+                "InsertConcept",
+                 new string[] { "@ConceptName" },
+                 new object[] { name }
+                );
         }
         public void InsertConceptToClassification(int classificationId, int conceptId, int parentId, string specDifference)
         {
@@ -271,6 +332,19 @@ namespace Classification.Utility.SQL
                 new string[] { "@Name", "@ConceptId", "@Measure" },
                 new object[] {name, conceptId, measure }
                 );
+        }
+        public void InsertPropertyToConcept(int conceptId, int propertyId, int? value)
+        {
+            var isaClassifications = SelectConceptISAClassifcations(conceptId);
+
+            foreach(DataRow row in isaClassifications.Rows)
+            {
+                ExecuteProcedure(
+                    "InsertPropertyToConcept",
+                    new string[] { "@ClassificationId", "@ConceptId", "@PropertyId", "@Value" },
+                    new object[] { (int)row["IdClassification"], conceptId, propertyId, value ?? (object)DBNull.Value }
+                );
+            }          
         }
         public void InsertDefinition(int classConceptId, int sourceId, string definitionText, int page)
         {
@@ -294,14 +368,38 @@ namespace Classification.Utility.SQL
                     );
         }
 
+        public int InsertConceptIdentity(string name)
+        {
+            return ExecuteProcedureIdentity(
+               "InsertConcept",
+                new string[] { "@ConceptName" },
+                new object[] { name }
+               );
+        }
+
+        public void UpdateClassificationConceptParent(int classificationId, int conceptId, int newParentId)
+        {
+            ExecuteProcedure(
+                    "UpdateClassificationConceptParent",
+                    new string[] { "@ClassificationId", "@ConceptId", "@NewParentId" },
+                    new object[] { classificationId, conceptId, newParentId }
+                    );
+        }
         public void UpdateProperty(int propertyId, int conceptId, string name, string measure)
         {
             ExecuteProcedure(
                     "UpdateProperty",
                     new string[] { "@PropertyId", "@PropertyConceptRootId", "@Name", "@Measure" },
-                    new object[]
-                    { propertyId, conceptId, name, measure }
+                    new object[] { propertyId, conceptId, name, measure }
                     );
+        }
+        public void UpdateConceptPropertyValue(int conceptId, int propertyId, int value)
+        {
+            ExecuteProcedure(
+                   "UpdateConceptPropertyValue",
+                   new string[] { "@ConceptId", "@PropertyId", "@Value" },
+                   new object[] { conceptId, propertyId, value }
+                   );
         }
         public void UpdateSource(int sourceId, string name, string author, int year)
         {
@@ -321,6 +419,19 @@ namespace Classification.Utility.SQL
                 new object[] { propertyId }
                 );
         }
+        public void DeletePropertyFromConcepts(int conceptId, int propertyID)
+        {
+            var isaClassifications = SelectConceptISAClassifcations(conceptId);
+
+            foreach (DataRow row in isaClassifications.Rows)
+            {
+                ExecuteProcedure(
+                    "DeletePropertyFromConcepts",
+                    new string[] { "@PropertyId", "@ConceptId", "@ClassificationId", },
+                    new object[] { propertyID, conceptId, (int)row["IdClassification"] }
+                );
+            }
+        }
         public void DeleteSource(int sourceId)
         {
             ExecuteProcedure(
@@ -328,6 +439,11 @@ namespace Classification.Utility.SQL
                 new string[] { "@SourceId" },
                 new object[] { sourceId }
                 );
+        }
+
+        public void Dispose()
+        {
+            Connection?.Dispose();
         }
     }
 }

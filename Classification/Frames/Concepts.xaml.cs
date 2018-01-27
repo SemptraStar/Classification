@@ -31,9 +31,13 @@ namespace Classification.Frames
         private int? _selectedClassificationId = null;
         private int _selectedConceptsType = 0;
 
+        public static Concepts Instance;
+
         public Concepts()
         {
             InitializeComponent();
+
+            Instance = this;
         }
 
         public Concepts(SQLClient client) : this()
@@ -49,7 +53,7 @@ namespace Classification.Frames
             SelectClassifications();
         }
 
-        private void SelectConcepts()
+        public void SelectConcepts()
         {
             DataTables.ConceptsDataTable.Clear();
             DataTables.ConceptsDataTable = _SQLClient.SelectConcepts();
@@ -120,6 +124,13 @@ namespace Classification.Frames
         {
             _selectedConceptsType = ConceptsTypeComboBox.SelectedIndex;
             DisplayConceptChilds();
+        }
+
+        private void AddConceptButton_Click(object sender, RoutedEventArgs e)
+        {
+            var addConceptWindow = new Windows.AddConceptWindow(_SQLClient);
+
+            addConceptWindow.Show();
         }
     }
 }

@@ -25,6 +25,8 @@ namespace Classification.Windows
     {
         private readonly SQLClient _SQLClient;
 
+        private Dictionary<int, string> _concepts;
+
         public AddClassificationWindow()
         {
             InitializeComponent();
@@ -33,20 +35,35 @@ namespace Classification.Windows
         {
             _SQLClient = client;
 
+            SelectClassificationTypes();
             SelectConcepts();
+        }
+
+        private void SelectClassificationTypes()
+        {
+            var types = new List<string>();
+
+            foreach(DataRow row in _SQLClient.SelectClassificationsTypes().Rows)
+            {
+                types.Add(row["Type"].ToString().Trim());
+            }
+
+            ClassificationTypeComboBox.ItemsSource = types;
         }
 
         private void SelectConcepts()
         {
-            DataTable dataTable = _SQLClient.SelectConcepts();
-            List<string> concepts = new List<string>();
+            var concepts = new List<string>();
+            var dataTable = _SQLClient.SelectConcepts();
+            _concepts = new Dictionary<int, string>();
 
-            foreach(DataRow row in dataTable.Rows)
+            foreach (DataRow row in dataTable.Rows)
             {
                 concepts.Add(
-                    row["Id"].ToString() + ". " + 
                     row["Name"].ToString().Trim()
                     );
+
+                _concepts.Add(int.Parse(row["Id"].ToString()), row["Name"].ToString().Trim());
             }
 
             ConceptsRootComboBox.ItemsSource = concepts;
@@ -56,9 +73,27 @@ namespace Classification.Windows
         {
             try
             {
+                string conceptName;
+                int conceptId;
+
+                if (ConceptsRootComboBox.SelectedValue != null)
+                {
+                    conceptName = ConceptsRootComboBox.SelectedValue.ToString();
+                    conceptId = _concepts.First(c => c.Value == conceptName).Key;
+                }                  
+                else if (ConceptsRootComboBox.Text.Length != 0)
+                {
+                    conceptName = ConceptsRootComboBox.Text;
+                    conceptId = _SQLClient.InsertConceptIdentity(conceptName);
+                }
+                else
+                {
+                    throw new ArgumentException("Поле с понятием должно быть заполнено.");
+                }
+
                 _SQLClient.InsertClassification(
                         ClassificationTypeComboBox.Text,
-                        int.Parse(ConceptsRootComboBox.Text.Split('.')[0]),
+                        conceptId,
                         ClassificationBaseTextBox.Text
                     );
             }

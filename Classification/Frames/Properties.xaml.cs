@@ -40,8 +40,10 @@ namespace Classification.Frames
         {
             _SQLClient = client;
 
-            DataTables.PropertiesDataTable = new System.Data.DataTable();
+            DataTables.PropertiesDataTable = new DataTable();
             RefreshDataGrid();
+
+            DataTables.PropertyArousedConceptsDataTable = new DataTable();
         }
 
         public void RefreshDataGrid()
@@ -51,6 +53,17 @@ namespace Classification.Frames
 
             PropertiesDataGrid.ItemsSource = null;
             PropertiesDataGrid.ItemsSource = DataTables.PropertiesDataTable?.DefaultView;
+        }
+
+        private void SelectPropertyArousedConcepts(int propertyId)
+        {
+            DataTables.PropertyArousedConceptsDataTable.Clear();
+
+            DataTables.PropertyArousedConceptsDataTable = 
+                _SQLClient.SelectPropertyArousedConcepts(propertyId);
+
+            PropertyArousedConceptsDataGrid.ItemsSource = null;
+            PropertyArousedConceptsDataGrid.ItemsSource = DataTables.PropertyArousedConceptsDataTable.DefaultView;
         }
 
         private void AddProperty_Click(object sender, RoutedEventArgs e)
@@ -91,6 +104,20 @@ namespace Classification.Frames
                 }
 
                 RefreshDataGrid();
+            }
+        }
+
+        private void PropertiesDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (PropertiesDataGrid.SelectedItems.Count == 1)
+            {
+                SelectPropertyArousedConcepts((int)((DataRowView)PropertiesDataGrid.SelectedItem)["Id"]);
+            }
+            else
+            {
+                DataTables.PropertyArousedConceptsDataTable.Clear();
+
+                PropertyArousedConceptsDataGrid.ItemsSource = null;
             }
         }
     }

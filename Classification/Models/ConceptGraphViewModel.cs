@@ -21,19 +21,40 @@ namespace Classification.Models
             }
         }
 
+        private string layoutAlgorithmType;
+        public string LayoutAlgorithmType
+        {
+            get { return layoutAlgorithmType; }
+            set
+            {
+                layoutAlgorithmType = value;
+                NotifyPropertyChanged("LayoutAlgorithmType");
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         private void NotifyPropertyChanged(string name)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            try
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            }
+            catch (IndexOutOfRangeException ex)
+            {
+
+            }
         }
 
         public void GenerateGraph(List<Concept> concepts)
         {
-            var conceptGraph = new ConceptGraph();
+            if (concepts == null || concepts.Count == 0)
+                return;
 
+            var conceptGraph = new ConceptGraph();           
             var vertecies = concepts.Select(c => new ConceptVertex(c)).ToList();
-            conceptGraph.AddVertexRange(vertecies);
 
+            conceptGraph.AddVertexRange(vertecies);           
+          
             foreach (var vertex in vertecies)
             {
                 var parent = vertex.FindConceptParent(vertecies);
@@ -41,6 +62,11 @@ namespace Classification.Models
                 if (parent != null)
                     conceptGraph.AddEdge(new ConceptEdge(parent, vertex));
             }
+
+            if (conceptGraph.Edges.Count() == 0)
+                LayoutAlgorithmType = "LinLog";
+            else
+                LayoutAlgorithmType = "EfficientSugiyama";
 
             Graph = conceptGraph;
         }

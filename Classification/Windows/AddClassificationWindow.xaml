@@ -5,19 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Classification.Windows"
         mc:Ignorable="d"
-        Title="Добавить классификацию" Height="300" Width="486.543">
+        Title="Добавить классификацию" Height="279.2" Width="462.276">
     <Grid>
         <TextBlock HorizontalAlignment="Left" FontSize="16" Margin="145,62,0,0" TextWrapping="Wrap" Text="Тип" VerticalAlignment="Top" Height="24" Width="44"/>
-        <TextBox x:Name="ClassificationBaseTextBox" HorizontalAlignment="Left" FontSize="16" Height="24" Margin="189,150,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="237"/>
-        <TextBlock HorizontalAlignment="Left" FontSize="16" Margin="90,150,0,0" TextWrapping="Wrap" Text="Основание" VerticalAlignment="Top" Height="24" Width="94"/>
-        <ComboBox x:Name="ClassificationTypeComboBox" HorizontalAlignment="Left" Margin="189,62,0,0" VerticalAlignment="Top" Width="237">
-            <ComboBoxItem>IS_A</ComboBoxItem>
-            <ComboBoxItem>PART_OF</ComboBoxItem>
+        <TextBox x:Name="ClassificationBaseTextBox" HorizontalAlignment="Left" FontSize="16" Height="24" Margin="189,147,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="237"/>
+        <TextBlock HorizontalAlignment="Left" FontSize="16" Margin="89,147,0,0" TextWrapping="Wrap" Text="Основание" VerticalAlignment="Top" Height="24" Width="94"/>
+        <ComboBox x:Name="ClassificationTypeComboBox" IsEditable="True"  HorizontalAlignment="Left" Margin="189,62,0,0" VerticalAlignment="Top" Width="237" Grid.ColumnSpan="2">
         </ComboBox>
         <TextBlock HorizontalAlignment="Left" FontSize="16" Margin="36,106,0,0" TextWrapping="Wrap" Text="Корневое понятие" VerticalAlignment="Top" Height="24" Width="148"/>
-        <ComboBox x:Name="ConceptsRootComboBox" ItemsSource="{Binding}"  HorizontalAlignment="Left" Margin="189,106,0,0" VerticalAlignment="Top" Width="237">
-        </ComboBox>
-        <Button x:Name="AddClassificationButton" FontSize="16" Content="Добавить" HorizontalAlignment="Center" Margin="189,202,189,0" VerticalAlignment="Top" Width="102" Click="AddClassificationButton_Click" Height="31"/>
+        <ComboBox x:Name="ConceptsRootComboBox" IsEditable="True" ItemsSource="{Binding}"  HorizontalAlignment="Left" Margin="189,108,0,0" VerticalAlignment="Top" Width="237"/>
+        <Button x:Name="AddClassificationButton" FontSize="16" Content="Добавить" HorizontalAlignment="Center" Margin="167,209,187,0" VerticalAlignment="Top" Width="102" Click="AddClassificationButton_Click" Height="31"/>
 
     </Grid>
 </Window>

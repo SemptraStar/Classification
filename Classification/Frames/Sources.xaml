@@ -21,8 +21,8 @@
         </DataGrid>
         <Button x:Name="AddSource" Content="Добавить" HorizontalAlignment="Left" Margin="50,562,0,0" VerticalAlignment="Top" Width="150" Height="38" FontSize="16" Click="AddSource_Click"/>
         <TextBlock HorizontalAlignment="Left" Margin="200,41,0,0" TextWrapping="Wrap" Text="Источники" VerticalAlignment="Top" FontSize="30" Height="36" Width="230"/>
-        <TextBlock HorizontalAlignment="Left" Margin="763,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="30" Height="36" Width="701"><Run Text="Определения понятий "/><Run Text="из источника"/></TextBlock>
-        <DataGrid x:Name="DefinitionsDataGrid" HorizontalAlignment="Left" Height="425" Margin="763,113,0,0" VerticalAlignment="Top" Width="701" AutoGenerateColumns="False" FontSize="16">
+        <TextBlock HorizontalAlignment="Left" Margin="763,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="30" Height="50" Width="701"><Run Text="Определения понятий "/><Run Text="из источника"/></TextBlock>
+        <DataGrid x:Name="DefinitionsDataGrid" HorizontalAlignment="Left" Height="425" Margin="763,113,0,0" VerticalAlignment="Top" Width="701" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" FontSize="16">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Понятие" Width="*">
                     <DataGridTemplateColumn.CellTemplate>

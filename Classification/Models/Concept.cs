@@ -25,7 +25,7 @@ namespace Classification.Models
                 Name = conceptDataRow.Field<string>("Name")?.Trim(),
                 SpeciesDifference = conceptDataRow.Field<string>("SpecDifference")?.Trim(),
                 Definition = conceptDataRow.Field<string>("Definition")?.Trim(),
-                Source = conceptDataRow.Field<string>("Source").Trim(),
+                Source = conceptDataRow.Field<string>("Source")?.Trim(),
                 ParentConceptId = conceptDataRow.Field<int?>("ParentId"),
                 Level = conceptDataRow.Field<int>("Level")
             };

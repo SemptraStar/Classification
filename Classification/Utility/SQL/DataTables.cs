@@ -14,7 +14,8 @@ namespace Classification.Utility.SQL
         public static DataTable ClassificationsToConceptsQueryDataTable;
 
         public static DataTable PropertiesDataTable;
-        public static DataTable PropertiesQueryDataTable;
+        public static DataTable PropertyArousedConceptsDataTable;
+        public static DataTable PropertiesTreeViewDataTable;
 
         public static DataTable DefinitiosDataTable;
         public static DataTable DefinitionsQueryDataTable;

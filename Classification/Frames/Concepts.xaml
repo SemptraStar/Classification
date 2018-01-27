@@ -17,7 +17,7 @@
                 <DataGridTextColumn Binding="{Binding Name}" Header="Понятие" Width="*"/>
             </DataGrid.Columns>
         </DataGrid>
-        <TextBlock HorizontalAlignment="Left" TextAlignment="Center" Margin="28,39,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="30" Height="44" Width="515"><Run Text="Понятия"/><LineBreak/><Run/></TextBlock>
+        <TextBlock HorizontalAlignment="Left" TextAlignment="Center" Margin="28,39,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="30" Height="52" Width="515"><Run Text="Понятия"/><LineBreak/><Run/></TextBlock>
         <TextBlock HorizontalAlignment="Left" Margin="1481,634,0,0" TextWrapping="Wrap" Text=";" VerticalAlignment="Top" FontSize="16" Height="24" Width="19"/>
         <TextBlock HorizontalAlignment="Left" FontSize="16" Margin="567,83,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="24" Width="123"><Run Text="Классификация"/><LineBreak/><Run/></TextBlock>
         <ComboBox x:Name="ClassificationsComboBox" HorizontalAlignment="Left" Margin="696,86,0,0" VerticalAlignment="Top" Width="237" SelectionChanged="ClassificationsComboBox_SelectionChanged"/>
@@ -48,12 +48,13 @@
                 <DataGridTextColumn Binding="{Binding Level}" Header="Уровень" Width="0.4*"/>
             </DataGrid.Columns>
         </DataGrid>
-        <TextBlock HorizontalAlignment="Left" Margin="562,35,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="30" Height="36" Width="962" TextAlignment="Center"><Run Text="П"/><Run Text="онятия в классификации"/></TextBlock>
+        <TextBlock HorizontalAlignment="Left" Margin="562,24,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="30" Height="47" Width="962" TextAlignment="Center"><Run Text="П"/><Run Text="онятия в классификации"/></TextBlock>
         <TextBlock HorizontalAlignment="Left" FontSize="16" Margin="966,86,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="24" Width="139"><Run Text="Выбрать поняти"/><Run Text="я"/></TextBlock>
         <ComboBox x:Name="ConceptsTypeComboBox" SelectedIndex="0" HorizontalAlignment="Left" Margin="1105,86,0,0" VerticalAlignment="Top" Width="237" SelectionChanged="ConceptsTypeComboBox_SelectionChanged">
             <ComboBoxItem>Дочерние</ComboBoxItem>
             <ComboBoxItem>Родительские</ComboBoxItem>
         </ComboBox>
+        <Button x:Name="AddConceptButton" Content="Добавить" HorizontalAlignment="Left" Margin="28,543,0,0" VerticalAlignment="Top" Width="204" Height="38" FontSize="16" Click="AddConceptButton_Click"/>
 
     </Grid>
 </Page>

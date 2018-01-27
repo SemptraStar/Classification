@@ -82,7 +82,12 @@ namespace Classification.Frames
             {
                 int classificationID = (int)((DataRowView)ClassificationsDataGrid.SelectedItem)["Id"];
 
-                var addClassificationToConceptWindow = new Windows.AddClassificationToConceptWindow(_SQLClient, classificationID);
+                var addClassificationToConceptWindow =
+                    new Windows.AddClassificationToConceptWindow(_SQLClient, classificationID)
+                    {
+                        Sender = this
+                    };
+
                 addClassificationToConceptWindow.Show();
             }
             
