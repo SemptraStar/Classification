@@ -54,7 +54,8 @@
             <ComboBoxItem>Дочерние</ComboBoxItem>
             <ComboBoxItem>Родительские</ComboBoxItem>
         </ComboBox>
-        <Button x:Name="AddConceptButton" Content="Добавить" HorizontalAlignment="Left" Margin="28,543,0,0" VerticalAlignment="Top" Width="204" Height="38" FontSize="16" Click="AddConceptButton_Click"/>
-
+        <Button x:Name="AddConceptButton" Content="Добавить" HorizontalAlignment="Left" Margin="143,543,0,0" VerticalAlignment="Top" Width="286" Height="38" FontSize="16" Click="AddConceptButton_Click"/>
+        <Button x:Name="ChangeConceptButton" Content="Изменить" HorizontalAlignment="Left" Margin="143,589,0,0" VerticalAlignment="Top" Width="286" Height="38" FontSize="16" Click="ChangeConceptButton_Click"/>
+        <Button x:Name="DeleteConceptButton" Content="Удалить" HorizontalAlignment="Left" Margin="143,634,0,0" VerticalAlignment="Top" Width="286" Height="38" FontSize="16" Click="DeleteConceptButton_Click"/>
     </Grid>
 </Page>

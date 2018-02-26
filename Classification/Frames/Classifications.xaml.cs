@@ -14,9 +14,9 @@ namespace Classification.Frames
     {
         public static Classifications Instance;
 
-        private readonly SQLClient _SQLClient;
+        private readonly SQLClient _sqlClient;
 
-        private int _SelectedClassificationId;
+        private int _selectedClassificationId;
 
         public Classifications()
         {
@@ -26,7 +26,7 @@ namespace Classification.Frames
         }
         public Classifications(SQLClient client) : this()
         {
-            _SQLClient = client;
+            _sqlClient = client;
 
             DataTables.ClassificationsDataTable = new DataTable();
             SelectClassifications();
@@ -37,7 +37,7 @@ namespace Classification.Frames
         public void SelectClassifications()
         {
             DataTables.ClassificationsDataTable.Clear();
-            DataTables.ClassificationsDataTable = _SQLClient
+            DataTables.ClassificationsDataTable = _sqlClient
                 .SelectClassificationsWithRootConcepts();
 
             ClassificationsDataGrid.ItemsSource = null;
@@ -46,8 +46,8 @@ namespace Classification.Frames
         public void SelectClassificationConcepts()
         {
             DataTables.ClassificationConceptsDataTable.Clear();
-            DataTables.ClassificationConceptsDataTable = _SQLClient
-                .SelectClassificationConcepts(_SelectedClassificationId);
+            DataTables.ClassificationConceptsDataTable = _sqlClient
+                .SelectClassificationConcepts(_selectedClassificationId);
 
             ConceptsDataGrid.ItemsSource = null;
             ConceptsDataGrid.ItemsSource = DataTables.ClassificationConceptsDataTable?.DefaultView;
@@ -65,14 +65,14 @@ namespace Classification.Frames
 
             if (ClassificationsDataGrid.SelectedItems.Count == 1)
             {
-                _SelectedClassificationId = (int)((DataRowView)ClassificationsDataGrid.SelectedItem)["Id"];
+                _selectedClassificationId = (int)((DataRowView)ClassificationsDataGrid.SelectedItem)["Id"];
                 SelectClassificationConcepts();
             }
         }
 
         private void AddClassificationButton_Click(object sender, RoutedEventArgs e)
         {
-            var addClassificationWindow = new Windows.AddClassificationWindow(_SQLClient);
+            var addClassificationWindow = new Windows.AddClassificationWindow(_sqlClient);
             addClassificationWindow.Show();
         }      
 
@@ -83,7 +83,7 @@ namespace Classification.Frames
                 int classificationID = (int)((DataRowView)ClassificationsDataGrid.SelectedItem)["Id"];
 
                 var addClassificationToConceptWindow =
-                    new Windows.AddClassificationToConceptWindow(_SQLClient, classificationID)
+                    new Windows.AddClassificationToConceptWindow(_sqlClient, classificationID)
                     {
                         Sender = this
                     };
@@ -101,7 +101,7 @@ namespace Classification.Frames
                 int conceptId = (int)((DataRowView)ConceptsDataGrid.SelectedItem)["Id"];
 
                 var addDefinitionWindow = new Windows.AddDefinitionWindow(
-                    _SQLClient, classificationID, conceptId);
+                    _sqlClient, classificationID, conceptId);
 
                 addDefinitionWindow.Show();
             }
@@ -115,10 +115,42 @@ namespace Classification.Frames
                 int conceptId = (int)((DataRowView)ConceptsDataGrid.SelectedItem)["Id"];
 
                 var changeDefinitionWindow = new Windows.ChangeDefinitionWindow(
-                    _SQLClient, classificationID, conceptId,
+                    _sqlClient, classificationID, conceptId,
                     (string)((DataRowView)ConceptsDataGrid.SelectedItem)["Definition"]);
 
                 changeDefinitionWindow.Show();
+            }
+        }
+
+        private void DeleteClassificationButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ClassificationsDataGrid.SelectedItems.Count == 1)
+            {
+                if (MessageBox.Show(
+                    "Вы действительно желаете удалить классификацию? " +
+                    "Это действие нельзя будет отменить.",
+                    "Удаление классификации",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning) == MessageBoxResult.No)
+                {
+                    return;
+                }
+
+                int classificationId = (int)((DataRowView)ClassificationsDataGrid.SelectedItem)["Id"];
+
+                _sqlClient.DeleteClassification(classificationId);
+
+                SelectClassifications();
+            }
+        }
+
+        private void ChangeClassificationButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ClassificationsDataGrid.SelectedItems.Count == 1)
+            {
+                var changeClassificationWindow = new Windows.ChangeClassificationWindow(_sqlClient, _selectedClassificationId);
+
+                changeClassificationWindow.Show();
             }
         }
     }

@@ -9,7 +9,7 @@
     <Grid>
         <TextBlock HorizontalAlignment="Left" FontSize="16" Margin="109,97,0,0" TextWrapping="Wrap" Text="Автор" VerticalAlignment="Top" Height="23" Width="68"/>
         <TextBlock HorizontalAlignment="Left" FontSize="16" Margin="126,131,0,0" TextWrapping="Wrap" Text="Год" VerticalAlignment="Top" Height="24" Width="51"/>
-        <Button x:Name="AddSourceButton" FontSize="16" Content="Сохранить изменения" HorizontalAlignment="Center" Margin="162,193,152,0" VerticalAlignment="Top" Width="166" Height="31" Click="ChangeSourceButton_Click"/>
+        <Button x:Name="ChangeSourceButton" FontSize="16" Content="Сохранить" HorizontalAlignment="Center" Margin="162,193,152,0" VerticalAlignment="Top" Width="166" Height="31" Click="ChangeSourceButton_Click"/>
         <TextBox x:Name="SourceNameTextBox" HorizontalAlignment="Left" TextWrapping="Wrap" AcceptsReturn="True" FontSize="16" Height="54" Margin="182,29,0,0" Text="" VerticalAlignment="Top" Width="290"/>
         <TextBox x:Name="SourceYearTextBox" HorizontalAlignment="Left" PreviewTextInput="NumberValidationTextBox" Height="23" Margin="182,132,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="290"/>
         <TextBlock HorizontalAlignment="Left" FontSize="16" Margin="10,29,0,0" TextWrapping="Wrap" Text="Название источника" VerticalAlignment="Top" Height="24" Width="160"/>

@@ -1,26 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using GraphSharp.Algorithms.Layout.Simple.Hierarchical;
-using GraphSharp.Algorithms.Layout.Simple.Tree;
-using Classification.Models;
+﻿using Classification.Models;
 using Classification.Models.GraphSharp;
-using QuickGraph;
-using System.ComponentModel;
-using System.Data;
+using Classification.Utility;
 using Classification.Utility.SQL;
 using GraphSharp.Controls;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Classification.Graphs
 {
@@ -37,7 +25,8 @@ namespace Classification.Graphs
 
         private int _selectedClassificationId = -1;
         private Dictionary<int, int> _properties;
-        private List<Concept> _classificationConcepts;
+        private Dictionary<int, Definition> _definitions;
+        private List<ClassificationConcept> _classificationConcepts;
 
         private bool _isChangingParentConceptActive = false;
         private int _selectedForChangingParentConceptId;
@@ -51,50 +40,73 @@ namespace Classification.Graphs
 
             Instance = this;
         }
+
         public TreeVisualizationPage(SQLClient sqlClient) : this()
         {
             _SQLClient = sqlClient;         
             SelectClassifications();
-        } 
-       
-        private void Vertex_MouseClick(object sender, MouseButtonEventArgs e)
-        {
-            var concept = ((sender as VertexControl).Vertex as ConceptVertex).Concept;
-
-            _selectedConceptId = concept.Id;
-
-            ConceptLabel.Text = concept.Name;
-
-            ConceptDefinitionLabel.Text = concept.Definition;
-
-            if (concept.Definition != null)
-            {
-                DefinitionTextLabel.Text = "Определение:";
-            }              
-            else
-            {
-                DefinitionTextLabel.Text = "";
-            }           
-
-            ConceptSpecDifferenceLabel.Text = concept.SpeciesDifference;
-
-            if (concept.SpeciesDifference != null)
-                SpecDifferenceTextLabel.Text = "Видовое отличие:";
-            else
-                SpecDifferenceTextLabel.Text = "";
-
-            SourceLabel.Text = concept.Source;
-
-            if (concept.Source != null)
-                SourceTextLabel.Text = "Источник:";
-            else
-                SourceTextLabel.Text = "";
-
-            if (_isChangingParentConceptActive)
-                ChangeConceptParent(concept.Id);
-
-            SelectConceptProperties(concept.Id);
         }
+
+        public void SelectClassifications()
+        {
+            DataTable dataTable = _SQLClient.SelectClassificationsWithRootConcepts();
+            List<string> classifications = new List<string>();
+
+            foreach (DataRow row in dataTable.Rows)
+            {
+                classifications.Add(
+                    string.Format("{0}. Тип: {1}. КП: {2}",
+                        row["Id"].ToString().Trim(),
+                        row["Type"].ToString().Trim(),
+                        row["ConceptRoot"].ToString().Trim()
+                    ));
+            }
+
+            ClassificationsComboBox.ItemsSource = classifications;
+        }
+
+        public void SelectConceptProperties(int conceptId)
+        {
+            DataTables.PropertiesTreeViewDataTable = _SQLClient.SelectConceptProperties(conceptId);
+            _properties = new Dictionary<int, int>();
+
+            int i = 0;
+            foreach (DataRow row in DataTables.PropertiesTreeViewDataTable.Rows)
+            {
+                _properties.Add(int.Parse(row["IdProperty"].ToString()), i);
+                i++;
+            }
+
+            PropertiesDataGrid.ItemsSource = DataTables.PropertiesTreeViewDataTable.DefaultView;
+        }
+
+        public void SelectConceptDefinitions(int classConceptId)
+        {
+            DataTable conceptDefinitonsDataTable = _SQLClient.SelectClassConceptDefinitions(classConceptId);
+            _definitions = new Dictionary<int, Definition>();
+
+            int i = 0;
+            foreach (DataRow row in conceptDefinitonsDataTable.Rows)
+            {
+                _definitions.Add(i, Definition.CreateDefinition(row));
+                i++;
+            }
+
+            DefinitionsDataGrid.ItemsSource = conceptDefinitonsDataTable.DefaultView;
+        }
+
+        public void GenerateGraph()
+        {
+            _classificationConcepts =
+                ClassificationConcept.CreateClassificationConcepts(
+                    _SQLClient.SelectClassificationConcepts(_selectedClassificationId)
+                    );
+
+            _conceptGraphViewModel.GenerateGraph(_classificationConcepts);
+
+            GenerateVertexEvents();
+        }
+
         private void ChangeConceptParent(int newParentId)
         {
             _isChangingParentConceptActive = false;
@@ -112,115 +124,9 @@ namespace Classification.Graphs
         private void ClearConceptLabels()
         {
             ConceptLabel.Text = "";
-            DefinitionTextLabel.Text = "";
-            ConceptDefinitionLabel.Text = "";
             SpecDifferenceTextLabel.Text = "";
             ConceptSpecDifferenceLabel.Text = "";
-            SourceTextLabel.Text = "";
-            SourceLabel.Text = "";
-        }
-
-        private ContextMenu CreateVertexContextMenu()
-        {
-            var contextMenu = new ContextMenu();
-
-            var addConceptItem = new MenuItem()
-            {
-                Header = "Добавить дочернее понятие"
-            };
-
-            addConceptItem.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(AddConcept_MouseClick);
-
-            var changeConceptParentItem = new MenuItem()
-            {
-                Header = "Изменить родительское понятие"
-            };
-
-            contextMenu.Items.Add(addConceptItem);
-            contextMenu.Items.Add(changeConceptParentItem);
-
-            return contextMenu;
-        }
-
-        private void ChangeConceptParent_MouseClick(object sender, MouseButtonEventArgs e)
-        {
-            _isChangingParentConceptActive = true;
-            _selectedForChangingParentConceptId = ((((
-                sender as MenuItem)
-               .Parent as ContextMenu)
-               .PlacementTarget as VertexControl)
-               .Vertex as ConceptVertex)
-               .Concept.Id;
-        }
-
-        private void AddConcept_MouseClick(object sender, MouseButtonEventArgs e)
-        {
-            var concept = ((((
-                sender as MenuItem)
-                .Parent as ContextMenu)
-                .PlacementTarget as VertexControl)
-                .Vertex as ConceptVertex)
-                .Concept;
-
-            var addClassificaitonToConceptWindow = 
-                new Windows.AddClassificationToConceptWindow(
-                    _SQLClient, _selectedClassificationId, concept.Id)
-                {
-                    Sender = this
-                };
-
-            addClassificaitonToConceptWindow.Show();
-        }
-
-        private void SelectClassifications()
-        {
-            DataTable dataTable = _SQLClient.SelectClassifications();
-            List<string> classifications = new List<string>();
-
-            foreach (DataRow row in dataTable.Rows)
-            {
-                classifications.Add(row["Id"].ToString().Trim() +
-                    ". Основание: " + row["Base"].ToString().Trim() +
-                    "; Тип: " + row["Type"].ToString().Trim());
-            }
-
-            ClassificationsComboBox.ItemsSource = classifications;          
-        }
-        public void SelectConceptProperties(int conceptId)
-        {
-            DataTables.PropertiesTreeViewDataTable = _SQLClient.SelectConceptProperties(conceptId);
-            _properties = new Dictionary<int, int>();
-
-            int i = 0;
-            foreach (DataRow row in DataTables.PropertiesTreeViewDataTable.Rows)
-            {
-                _properties.Add(int.Parse(row["IdProperty"].ToString()), i);
-                i++;
-            }
-            
-            PropertiesDataGrid.ItemsSource = DataTables.PropertiesTreeViewDataTable.DefaultView;
-        }
-
-        private void ClassificationsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ClearConceptLabels();
-            _selectedClassificationId = int.Parse(ClassificationsComboBox.SelectedItem.ToString().Split('.')[0]);
-           
-            GenerateGraph();
-            GenerateVertexEvents();
-        }
-
-        public void GenerateGraph()
-        {
-            _classificationConcepts =
-                Concept.CreateConcepts(
-                    _SQLClient.SelectClassificationConcepts(_selectedClassificationId)
-                    );
-
-            _conceptGraphViewModel.GenerateGraph(_classificationConcepts);
-
-            GenerateVertexEvents();
-        }
+        }                
 
         private void GenerateVertexEvents()
         {
@@ -233,6 +139,30 @@ namespace Classification.Graphs
                     vertexControl.ContextMenu = CreateVertexContextMenu();
                 }
             }
+        }
+
+        private ContextMenu CreateVertexContextMenu()
+        {
+            var contextMenu = new ContextMenu();
+
+            var addConceptItem = new MenuItem
+            {
+                Header = "Добавить дочернее понятие"
+            };
+
+            addConceptItem.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(AddConcept_MouseClick);
+
+            var changeConceptParentItem = new MenuItem
+            {
+                Header = "Изменить родительское понятие"
+            };
+
+            changeConceptParentItem.PreviewMouseLeftButtonDown += new MouseButtonEventHandler(ChangeConceptParent_MouseClick);
+
+            contextMenu.Items.Add(addConceptItem);
+            contextMenu.Items.Add(changeConceptParentItem);
+
+            return contextMenu;
         }
 
         private void AddProperty_Click(object sender, RoutedEventArgs e)
@@ -293,6 +223,90 @@ namespace Classification.Graphs
             _SQLClient.UpdateConceptPropertyValue(
                 _selectedConceptId, propertyId, value
                 );
+        }
+
+        private void AddConcept_MouseClick(object sender, MouseButtonEventArgs e)
+        {
+            var concept = ((((
+                sender as MenuItem)
+                .Parent as ContextMenu)
+                .PlacementTarget as VertexControl)
+                .Vertex as ConceptVertex)
+                .Concept;
+
+            var addClassificaitonToConceptWindow =
+                new Windows.AddClassificationToConceptWindow(
+                    _SQLClient, _selectedClassificationId, concept.Id)
+                {
+                    Sender = this
+                };
+
+            addClassificaitonToConceptWindow.Show();
+        }
+
+        private void ChangeConceptParent_MouseClick(object sender, MouseButtonEventArgs e)
+        {
+            _isChangingParentConceptActive = true;
+            _selectedForChangingParentConceptId = ((((
+                sender as MenuItem)
+               .Parent as ContextMenu)
+               .PlacementTarget as VertexControl)
+               .Vertex as ConceptVertex)
+               .Concept.Id;
+        }
+
+        private void Vertex_MouseClick(object sender, MouseButtonEventArgs e)
+        {
+            var concept = ((sender as VertexControl).Vertex as ConceptVertex).Concept;
+
+            _selectedConceptId = concept.Id;
+
+            ConceptLabel.Text = concept.Name;
+
+            ConceptSpecDifferenceLabel.Text = concept.SpeciesDifference;
+
+            if (concept.SpeciesDifference != null)
+                SpecDifferenceTextLabel.Text = "Видовое отличие:";
+            else
+                SpecDifferenceTextLabel.Text = "";
+
+            if (_isChangingParentConceptActive)
+                ChangeConceptParent(concept.Id);
+
+            SelectConceptProperties(concept.Id);
+
+            SelectConceptDefinitions(_SQLClient.FindClassConcept(_selectedClassificationId, concept.Id).Field<int>("Id"));
+        }
+
+        private void ClassificationsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ClearConceptLabels();
+            _selectedClassificationId = int.Parse(ClassificationsComboBox.SelectedItem.ToString().Split('.')[0]);
+
+            GenerateGraph();
+            GenerateVertexEvents();
+        }
+
+        private void AddDefinition_Click(object sender, RoutedEventArgs e)
+        {
+            if (_selectedClassificationId != -1 && _selectedConceptId != -1)
+            {
+                var addDefinitionWindow = new Windows.AddDefinitionWindow(_SQLClient, _selectedClassificationId, _selectedConceptId);
+
+                addDefinitionWindow.Show();
+            }          
+        }
+
+        private void DeleteDefinition_Click(object sender, RoutedEventArgs e)
+        {
+            if (DefinitionsDataGrid.IsSingleRowSelected())
+            {
+                Definition selectedDefinition = _definitions[DefinitionsDataGrid.SelectedIndex];
+
+                _SQLClient.DeleteDefinition(selectedDefinition.ClassConceptId, selectedDefinition.SourceId);
+
+                SelectConceptDefinitions(selectedDefinition.ClassConceptId);
+            }
         }
     }
 }

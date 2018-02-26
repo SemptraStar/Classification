@@ -103,6 +103,8 @@ namespace Classification.Windows
             }
 
             Frames.Classifications.Instance.SelectClassifications();
+            Frames.Concepts.Instance.SelectClassifications();
+            Graphs.TreeVisualizationPage.Instance.SelectClassifications();
         }
     }
 }

@@ -85,7 +85,7 @@ namespace Classification.Frames
         {
             if (SourcesDataGrid.SelectedItems.Count == 1)
             {
-                int selectedSourceId = (int)((DataRowView)SourcesDataGrid.SelectedItem)["IdSource"];
+                int selectedSourceId = (int)((DataRowView)SourcesDataGrid.SelectedItem)["Id"];
 
                 var changeSourceWindow = new Windows.ChangeSourceWindow(_SQLClient, selectedSourceId);
                 changeSourceWindow.Show();
@@ -109,7 +109,7 @@ namespace Classification.Frames
 
                 foreach (var item in SourcesDataGrid.SelectedItems)
                 {
-                    _SQLClient.DeleteSource((int)((DataRowView)item)["IdSource"]);
+                    _SQLClient.DeleteSource((int)((DataRowView)item)["Id"]);
                 }
 
                 SelectSources();

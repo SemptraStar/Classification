@@ -61,21 +61,32 @@ namespace Classification.Frames
             ConceptsDataGrid.ItemsSource = null;
             ConceptsDataGrid.ItemsSource = DataTables.ConceptsDataTable.DefaultView;
         }
-        private void SelectClassifications()
+
+        public void SelectClassifications()
         {
-            DataTable dataTable = _SQLClient.SelectClassifications();
+            DataTable dataTable = _SQLClient.SelectClassificationsWithRootConcepts();
             List<string> classifications = new List<string>();
 
             foreach (DataRow row in dataTable.Rows)
             {
-                classifications.Add(row["Id"].ToString().Trim() + 
-                    ". Основание: " + row["Base"].ToString().Trim() + 
-                    "; Тип: " + row["Type"].ToString().Trim());
+                classifications.Add(
+                    string.Format("{0}. Тип: {1}. КП: {2}",
+                        row["Id"].ToString().Trim(),
+                        row["Type"].ToString().Trim(),
+                        row["ConceptRoot"].ToString().Trim()
+                    ));
             }
 
             ClassificationsComboBox.ItemsSource = null;
             ClassificationsComboBox.ItemsSource = classifications;
         }
+
+        public void ClearConceptChildsDataGrid()
+        {
+            DataTables.ConceptChildsDataTable.Clear();
+            ConceptChildsDataGrid.Items.Refresh();
+        }
+
         private void SelectClassificationConcepts(int conceptId, int classificationId)
         {
             DataTables.ConceptChildsDataTable = _selectedConceptsType == 0 ?
@@ -112,13 +123,7 @@ namespace Classification.Frames
 
                 SelectClassificationConcepts((int)_selectedConceptId, (int)_selectedClassificationId);
             }
-        }
-
-        public void ClearConceptChildsDataGrid()
-        {
-            DataTables.ConceptChildsDataTable.Clear();
-            ConceptChildsDataGrid.Items.Refresh();
-        }
+        }     
 
         private void ConceptsTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -131,6 +136,67 @@ namespace Classification.Frames
             var addConceptWindow = new Windows.AddConceptWindow(_SQLClient);
 
             addConceptWindow.Show();
+        }
+
+        private void DeleteConceptButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ConceptsDataGrid.SelectedItems.Count == 1)
+            {               
+                var selectedConcept = (DataRowView)ConceptsDataGrid.SelectedItem;
+                int conceptId = (int)selectedConcept["Id"];
+
+                if (MessageBox.Show(
+                    $"Вы действительно желаете удалить " +
+                    $"понятие {(string)selectedConcept["Name"]}? " +
+                    $"Это действие нельзя будет отменить.",
+                    "Удаление понятия",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning) == MessageBoxResult.No)
+                {
+                    return;
+                }
+
+                DataTable conceptClassifications = _SQLClient.FindConceptClassifications(conceptId);
+
+                if (conceptClassifications.Rows.Count > 0)
+                {
+                    string classifications = "";
+
+                    foreach(DataRow row in conceptClassifications.Rows)
+                    {
+                        classifications += row["Id"].ToString().Trim() +
+                            ". Тип: " + row["Type"].ToString().Trim() +
+                            ". КП: " + row["ConceptRoot"].ToString().Trim() + "; ";
+                    }
+
+                    MessageBox.Show(
+                        string.Format("Понятие {0} находится в следующий классификациях ({1}): {2}. " +
+                        "Перед тем как удалить его, необходимо удалить его из соответствующих классификаций.",
+                        selectedConcept["Name"].ToString().Trim(),
+                        conceptClassifications.Rows.Count,
+                        classifications),
+                        "Внимание",
+                        MessageBoxButton.OK);
+
+                    return;
+                }
+
+                _SQLClient.DeleteConcept(conceptId);
+
+                SelectConcepts();
+            }
+        }
+
+        private void ChangeConceptButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ConceptsDataGrid.SelectedItems.Count == 1)
+            {
+                int conceptId = (int)((DataRowView)ConceptsDataGrid.SelectedItem)["Id"];
+
+                var changeConceptWindow = new Windows.ChangeConceptWindow(_SQLClient, conceptId);
+
+                changeConceptWindow.Show();
+            }
         }
     }
 }

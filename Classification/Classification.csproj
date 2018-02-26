@@ -114,12 +114,15 @@
       <DependentUpon>TreeVisualizationPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\Classification.cs" />
+    <Compile Include="Models\ClassificationConcept.cs" />
     <Compile Include="Models\Concept.cs" />
     <Compile Include="Models\ConceptGraphViewModel.cs" />
+    <Compile Include="Models\Definition.cs" />
     <Compile Include="Models\GraphSharp\ConceptEdge.cs" />
     <Compile Include="Models\GraphSharp\ConceptGraph.cs" />
     <Compile Include="Models\GraphSharp\ConceptGraphLayout.cs" />
     <Compile Include="Models\GraphSharp\ConceptVertex.cs" />
+    <Compile Include="Utility\DataGridHelper.cs" />
     <Compile Include="Utility\ParseUtilities.cs" />
     <Compile Include="Utility\SQL\SQLClient.cs" />
     <Compile Include="Utility\SQL\DataTables.cs" />
@@ -131,6 +134,12 @@
     </Compile>
     <Compile Include="Windows\AddPropertyToConceptWindow.xaml.cs">
       <DependentUpon>AddPropertyToConceptWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\ChangeClassificationWindow.xaml.cs">
+      <DependentUpon>ChangeClassificationWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\ChangeConceptWindow.xaml.cs">
+      <DependentUpon>ChangeConceptWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\ChangeDefinitionWindow.xaml.cs">
       <DependentUpon>ChangeDefinitionWindow.xaml</DependentUpon>
@@ -198,6 +207,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\AddPropertyToConceptWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\ChangeClassificationWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\ChangeConceptWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

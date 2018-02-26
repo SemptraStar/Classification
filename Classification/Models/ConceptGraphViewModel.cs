@@ -45,7 +45,7 @@ namespace Classification.Models
             }
         }
 
-        public void GenerateGraph(List<Concept> concepts)
+        public void GenerateGraph(List<ClassificationConcept> concepts)
         {
             if (concepts == null || concepts.Count == 0)
                 return;

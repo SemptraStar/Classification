@@ -44,14 +44,17 @@ namespace Classification.Frames
 
         private void SelectClassifications()
         {
-            DataTable dataTable = _SQLClient.SelectClassifications();
+            DataTable dataTable = _SQLClient.SelectClassificationsWithRootConcepts();
             List<string> classifications = new List<string>();
 
             foreach (DataRow row in dataTable.Rows)
             {
-                classifications.Add(row["Id"].ToString().Trim() +
-                    ". Основание: " + row["Base"].ToString().Trim() +
-                    "; Тип: " + row["Type"].ToString().Trim());
+                classifications.Add(
+                    string.Format("{0}. Тип: {1}. КП: {2}",
+                        row["Id"].ToString().Trim(),
+                        row["Type"].ToString().Trim(),
+                        row["ConceptRoot"].ToString().Trim()
+                    ));
             }
 
             ClassificationsComboBox.ItemsSource = null;

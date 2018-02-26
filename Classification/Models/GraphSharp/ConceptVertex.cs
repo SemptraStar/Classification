@@ -11,9 +11,9 @@ namespace Classification.Models.GraphSharp
 {
     public class ConceptVertex
     {
-        public Concept Concept { get; set; }
+        public ClassificationConcept Concept { get; set; }
 
-        public ConceptVertex(Concept concept)
+        public ConceptVertex(ClassificationConcept concept)
         {
             Concept = concept;
         }
