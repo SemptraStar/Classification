@@ -6,12 +6,16 @@
       xmlns:local="clr-namespace:Classification.Frames"
       mc:Ignorable="d" 
       d:DesignHeight="1080" d:DesignWidth="1920" 
-      Title="Classifications" >
+      Title="Classifications" Loaded="Page_Loaded" >
 
 
 
     <Grid>
-        <DataGrid x:Name="ClassificationsDataGrid" HorizontalAlignment="Left" IsReadOnly="True" CanUserAddRows="false" Height="425" Margin="22,113,0,0" VerticalAlignment="Top" Width="609" AutoGenerateColumns="False" FontSize="16" SelectionChanged="ClassificationsDataGrid_SelectionChanged">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="413*"/>
+            <ColumnDefinition Width="1507*"/>
+        </Grid.ColumnDefinitions>
+        <DataGrid x:Name="ClassificationsDataGrid" HorizontalAlignment="Left" IsReadOnly="True" CanUserAddRows="false" Height="425" Margin="22,113,0,0" VerticalAlignment="Top" Width="609" AutoGenerateColumns="False" FontSize="16" SelectionChanged="ClassificationsDataGrid_SelectionChanged" Grid.ColumnSpan="2">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Id}" Header="ID" Width="0.8*"/>
                 <DataGridTextColumn Binding="{Binding Type}" Header="Тип" Width="3*"/>
@@ -19,10 +23,10 @@
                 <DataGridTextColumn Binding="{Binding Base}" Header="Основание" Width="3*"/>
             </DataGrid.Columns>
         </DataGrid>
-        <TextBlock HorizontalAlignment="Left" TextAlignment="Center" Margin="22,47,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="30" Height="36" Text="Классификации" RenderTransformOrigin="0.5,0.5" Width="608" />
-        <TextBlock HorizontalAlignment="Left" TextAlignment="Center" Margin="652,47,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="30" Height="36" Width="848" Text="Понятия в классификации"/>
-        <Button x:Name="AddClassificationButton" Content="Добавить" HorizontalAlignment="Left" Margin="172,562,0,0" VerticalAlignment="Top" Width="295" Height="38" FontSize="16" Click="AddClassificationButton_Click"/>
-        <DataGrid x:Name="ConceptsDataGrid" HorizontalAlignment="Left" IsReadOnly="True" CanUserAddRows="false" Height="425" Margin="652,113,0,0" VerticalAlignment="Top" Width="848" AutoGenerateColumns="False" FontSize="16">
+        <TextBlock HorizontalAlignment="Left" TextAlignment="Center" Margin="22,47,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="30" Height="36" Text="Классификации" RenderTransformOrigin="0.5,0.5" Width="608" Grid.ColumnSpan="2" />
+        <TextBlock HorizontalAlignment="Left" TextAlignment="Center" Margin="238.567,47,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="30" Height="36" Width="848" Text="Понятия в классификации" Grid.Column="1"/>
+        <Button x:Name="AddClassificationButton" Content="Добавить" HorizontalAlignment="Left" Margin="172,562,0,0" VerticalAlignment="Top" Width="295" Height="38" FontSize="16" Click="AddClassificationButton_Click" Grid.ColumnSpan="2"/>
+        <DataGrid x:Name="ConceptsDataGrid" HorizontalAlignment="Left" IsReadOnly="True" CanUserAddRows="false" Height="425" Margin="238.567,113,0,0" VerticalAlignment="Top" Width="848" AutoGenerateColumns="False" FontSize="16" Grid.Column="1">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Id}" Header="ID" Width="0.2*"/>
                 <DataGridTextColumn Binding="{Binding Name}" Header="Понятие" Width="*"/>
@@ -40,11 +44,11 @@
                 <DataGridTextColumn Binding="{Binding Level}" Header="Уровень" Width="0.4*"/>
             </DataGrid.Columns>
         </DataGrid>
-        <Button x:Name="AddConceptButton" Content="Добавить понятие" HorizontalAlignment="Left" Margin="652,563,0,0" VerticalAlignment="Top" Width="270" Height="38" FontSize="16" Click="AddConceptButton_Click"/>
-        <Button x:Name="AddDefinition" Content="Добавить определение к понятию" HorizontalAlignment="Left" Margin="946,562,0,0" VerticalAlignment="Top" Width="270" Height="38" FontSize="16" Click="AddDefinition_Click"/>
-        <Button x:Name="ChangeDefinition" Content="Изменить определение понятия" HorizontalAlignment="Left" Margin="946,605,0,0" VerticalAlignment="Top" Width="270" Height="38" FontSize="16" Click="ChangeDefinition_Click"/>
-        <Button x:Name="DeleteClassificationButton" Content="Удалить" HorizontalAlignment="Left" Margin="172,648,0,0" VerticalAlignment="Top" Width="295" Height="38" FontSize="16" Click="DeleteClassificationButton_Click" />
-        <Button x:Name="ChangeClassificationButton" Content="Изменить" HorizontalAlignment="Left" Margin="172,605,0,0" VerticalAlignment="Top" Width="295" Height="38" FontSize="16" Click="ChangeClassificationButton_Click"/>
+        <Button x:Name="AddConceptButton" Content="Добавить" HorizontalAlignment="Left" Margin="238.567,563,0,0" VerticalAlignment="Top" Width="270" Height="38" FontSize="16" Click="AddConceptButton_Click" Grid.Column="1"/>
+        <Button x:Name="DeleteClassificationButton" Content="Удалить" HorizontalAlignment="Left" Margin="172,648,0,0" VerticalAlignment="Top" Width="295" Height="38" FontSize="16" Click="DeleteClassificationButton_Click" Grid.ColumnSpan="2" />
+        <Button x:Name="ChangeClassificationButton" Content="Изменить" HorizontalAlignment="Left" Margin="172,605,0,0" VerticalAlignment="Top" Width="295" Height="38" FontSize="16" Click="ChangeClassificationButton_Click" Grid.ColumnSpan="2"/>
+        <Button x:Name="ChangeConceptButton" Content="Изменить" HorizontalAlignment="Left" Margin="239,606,0,0" VerticalAlignment="Top" Width="270" Height="38" FontSize="16" Click="ChangeConceptButton_Click" Grid.Column="1"/>
+        <Button x:Name="DeleteConceptButton" Content="Удалить" HorizontalAlignment="Left" Margin="239,649,0,0" VerticalAlignment="Top" Width="270" Height="38" FontSize="16"  Grid.Column="1" Click="DeleteConceptButton_Click"/>
 
     </Grid>
 </Page>

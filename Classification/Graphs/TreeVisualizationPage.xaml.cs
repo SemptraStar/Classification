@@ -44,7 +44,6 @@ namespace Classification.Graphs
         public TreeVisualizationPage(SQLClient sqlClient) : this()
         {
             _SQLClient = sqlClient;         
-            SelectClassifications();
         }
 
         public void SelectClassifications()
@@ -188,7 +187,7 @@ namespace Classification.Graphs
             }
 
             var result = MessageBox.Show(
-                $"Вы действительно хотите удалить ({PropertiesDataGrid.SelectedItems.Count}) свойств?",
+                "Вы действительно хотите удалить ({PropertiesDataGrid.SelectedItems.Count}) свойств?",
                 "Внимание",
                 MessageBoxButton.YesNoCancel,
                 MessageBoxImage.Question);
@@ -307,6 +306,11 @@ namespace Classification.Graphs
 
                 SelectConceptDefinitions(selectedDefinition.ClassConceptId);
             }
+        }
+
+        private void root_Loaded(object sender, RoutedEventArgs e)
+        {
+            SelectClassifications();
         }
     }
 }

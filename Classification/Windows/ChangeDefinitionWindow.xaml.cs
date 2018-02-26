@@ -1,21 +1,11 @@
-﻿using System;
+﻿using Classification.Utility.SQL;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-
-using Classification.Utility.SQL;
 using System.Data;
 using System.Data.SqlClient;
 using System.Text.RegularExpressions;
+using System.Linq;
+using System.Windows;
+using System.Windows.Input;
 
 namespace Classification.Windows
 {
@@ -24,13 +14,11 @@ namespace Classification.Windows
     /// </summary>
     public partial class ChangeDefinitionWindow : Window
     {
-        private readonly SQLClient _SQLClient;
-        private int? _SelectedClassificationId;
-        private int? _SelectedConceptId;
-        private string _SelectedSourceName;
-        private int _SelectedSourceId;
+        private readonly SQLClient _sqlClient;
+        private int? _selectedClassificationId;
+        private int? _selectedConceptId;
         private int _SelectedClassConceptId;
-        private string _Definition;
+        private string _definition;
 
         public ChangeDefinitionWindow()
         {
@@ -40,80 +28,52 @@ namespace Classification.Windows
 
         public ChangeDefinitionWindow(SQLClient client) : this()
         {
-            _SQLClient = client;
-                
-            //SelectSources();
+            _sqlClient = client;               
         }
 
         public ChangeDefinitionWindow(SQLClient client, int selectedClassificationId, 
             int selectedConceptId, string definition) : this(client)
         {
-            _SelectedClassificationId = selectedClassificationId;
-            _SelectedConceptId = selectedConceptId;
-            _Definition = definition;
+            _selectedClassificationId = selectedClassificationId;
+            _selectedConceptId = selectedConceptId;
+            _definition = definition;
 
-            /*
             FindClassConcept();
             FindClassification();
             FindConcept();
             SelectSources();
-            FindDefinition();
-            */
+            FindDefinition();            
         }
 
-        /*
         private void FindClassConcept()
         {
-            SqlDataAdapter adapter = new SqlDataAdapter();
-            DataTable tempDT = new DataTable();
+            DataRow classConceptDataRow = _sqlClient.FindClassConcept((int)_selectedClassificationId, (int)_selectedConceptId);
 
-            _SQLClient.ExecuteProcdureScalar(
-                "FindClassConcept",
-                new string[] { "@ClassificationId", "@ConceptId" },
-                new object[] { _SelectedClassificationId, _SelectedConceptId },
-                tempDT,
-                ref adapter);
-
-            _SelectedClassConceptId = tempDT.Rows[0].Field<int>("Id");
+            _SelectedClassConceptId = classConceptDataRow.Field<int>("Id");
         }
         private void FindClassification()
         {
-            SqlDataAdapter adapter = new SqlDataAdapter();
-            DataTable tempDT = new DataTable();
-            _SQLClient.ExecuteProcdureScalar(
-                "FindClassification",
-                new string[] { "@ClassificationId" },
-                new object[] { _SelectedClassificationId },
-                tempDT,
-                ref adapter);
+            DataRow classificationDataRow = _sqlClient.FindClassification((int)_selectedClassificationId);
 
-            var row = tempDT.Rows[0];
-
-            ClassificationText.Text = 
-                  $"{row.Field<int>("IdClassification").ToString().Trim()}. " +
-                  $"Тип: {row.Field<string>("Type").Trim()}" +
-                  $"Основание: {row.Field<string>("Base").Trim()}"; 
+            ClassificationText.Text =
+                  classificationDataRow.Field<int>("IdClassification").ToString().Trim() +
+                  ". Тип: " +
+                  classificationDataRow.Field<string>("Type").Trim() +
+                  "Основание: " +
+                  classificationDataRow.Field<string>("Base").Trim(); 
         }
         private void FindConcept()
         {
-            SqlDataAdapter adapter = new SqlDataAdapter();
-            DataTable tempDT = new DataTable();
-            _SQLClient.ExecuteProcdureScalar(
-                "FindConcept",
-                new string[] { "@ConceptId" },
-                new object[] { _SelectedConceptId },
-                tempDT,
-                ref adapter);
-
-            var row = tempDT.Rows[0];
+            DataRow conceptDataRow = _sqlClient.FindConcept((int)_selectedConceptId);
 
             ConceptText.Text =
-                  $"{row.Field<int>("IdConcept").ToString().Trim()}. " +
-                  $"{row.Field<string>("Name").Trim()}";
+                  conceptDataRow.Field<int>("IdConcept").ToString().Trim() +
+                  ". " +
+                  conceptDataRow.Field<string>("Name").Trim();
         }
         private void SelectSources()
         {
-            DataTable dataTable = _SQLClient.SelectSources();
+            DataTable dataTable = _sqlClient.SelectSources();
             List<string> sources = new List<string>();
 
             foreach (DataRow row in dataTable.Rows)
@@ -128,16 +88,13 @@ namespace Classification.Windows
             SourceComboBox.ItemsSource = null;
             SourceComboBox.ItemsSource = sources;
 
-            SourceComboBox.SelectedIndex = SourceComboBox
-                .Items.OfType<string>().ToList()
-                .FindIndex(item =>
-                int.Parse(item.Split('.').First()) == _SelectedSourceId);
+
         }
         private void FindDefinition()
         {
-            DefinitionTextBox.Text = _Definition;
+            DefinitionTextBox.Text = _definition;
         }
-        */
+
 
         private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
         {

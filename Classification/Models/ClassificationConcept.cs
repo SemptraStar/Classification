@@ -20,8 +20,8 @@ namespace Classification.Models
             return new ClassificationConcept
             {
                 Id = conceptDataRow.Field<int>("Id"),
-                Name = conceptDataRow.Field<string>("Name")?.Trim(),
-                SpeciesDifference = conceptDataRow.Field<string>("SpecDifference")?.Trim(),
+                Name = conceptDataRow.Field<string>("Name"),
+                SpeciesDifference = conceptDataRow.Field<string>("SpecDifference"),
                 ParentConceptId = conceptDataRow.Field<int?>("ParentId"),
                 Level = conceptDataRow.Field<int>("Level")
             };

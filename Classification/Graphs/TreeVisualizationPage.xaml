@@ -11,7 +11,7 @@
       mc:Ignorable="d" 
       d:DesignHeight="800" d:DesignWidth="1600"
       Title="TreeVisualizationPage"
-      x:Name="root">
+      x:Name="root" Loaded="root_Loaded">
 
     <Page.Resources>
         <DataTemplate x:Key="ConceptVertexTemplate" DataType="{x:Type customGraphs:ConceptVertex}">

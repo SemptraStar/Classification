@@ -23,10 +23,13 @@ namespace Classification.Utility.SQL
             {
                 command.CommandType = CommandType.StoredProcedure;
 
-                for (int i = 0; i < parameters?.Length; i++)
+                if (parameters != null)
                 {
-                    command.Parameters.AddWithValue(parameters[i], values[i]);
-                }
+                    for (int i = 0; i < parameters.Length; i++)
+                    {
+                        command.Parameters.AddWithValue(parameters[i], values[i]);
+                    }
+                }                
 
                 try
                 {
@@ -62,7 +65,7 @@ namespace Classification.Utility.SQL
             }
             finally
             {
-                Connection?.Close();
+                Connection.Close();
             }
         }
 
@@ -294,7 +297,7 @@ namespace Classification.Utility.SQL
             {
                 command.CommandType = CommandType.StoredProcedure;
 
-                for (int i = 0; i < parameters?.Length; i++)
+                for (int i = 0; i < parameters.Length; i++)
                 {
                     command.Parameters.AddWithValue(parameters[i], values[i]);
                 }
@@ -317,7 +320,7 @@ namespace Classification.Utility.SQL
             {
                 command.CommandType = CommandType.StoredProcedure;
 
-                for (int i = 0; i < parameters?.Length; i++)
+                for (int i = 0; i < parameters.Length; i++)
                 {
                     command.Parameters.AddWithValue(parameters[i], values[i]);
                 }
@@ -485,6 +488,24 @@ namespace Classification.Utility.SQL
                 new object[] { conceptId }
                 );
         }
+        public void DeleteConceptFromClassification(int classConceptId)
+        {
+            ExecuteProcedure(
+                "DeleteConceptFromClassification",
+                new string[] { "@ClassConceptId" },
+                new object[] { classConceptId }
+                );
+        }
+        public void DeleteConceptFromClassification(int classificationId, int conceptId)
+        {
+            int classConceptId = FindClassConcept(classificationId, conceptId).Field<int>("Id");
+
+            ExecuteProcedure(
+                "DeleteConceptFromClassification",
+                new string[] { "@ClassConceptId" },
+                new object[] { classConceptId }
+                );
+        }
         public void DeleteProperty(int propertyId)
         {
             ExecuteProcedure(
@@ -525,7 +546,7 @@ namespace Classification.Utility.SQL
 
         public void Dispose()
         {
-            Connection?.Dispose();
+            Connection.Dispose();
         }
     }
 }

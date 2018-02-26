@@ -1,22 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Classification.Utility.SQL;
+using System.Data;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-using Classification.Utility.SQL;
-using System.Data.SqlClient;
-using System.Data;
 
 namespace Classification.Frames
 {
@@ -40,10 +25,7 @@ namespace Classification.Frames
         {
             _SQLClient = client;
 
-            DataTables.PropertiesDataTable = new DataTable();
-            RefreshDataGrid();
-
-            DataTables.PropertyArousedConceptsDataTable = new DataTable();
+            InitializeTables();
         }
 
         public void RefreshDataGrid()
@@ -52,7 +34,7 @@ namespace Classification.Frames
             DataTables.PropertiesDataTable = _SQLClient.SelectProperties();
 
             PropertiesDataGrid.ItemsSource = null;
-            PropertiesDataGrid.ItemsSource = DataTables.PropertiesDataTable?.DefaultView;
+            PropertiesDataGrid.ItemsSource = DataTables.PropertiesDataTable.DefaultView;
         }
 
         private void SelectPropertyArousedConcepts(int propertyId)
@@ -88,9 +70,9 @@ namespace Classification.Frames
             if (PropertiesDataGrid.SelectedItems.Count > 0)
             {
                 if (MessageBox.Show(
-                    $"Вы действительно желаете удалить " +
-                    $"({PropertiesDataGrid.SelectedItems.Count}) свойств(о/а)? " +
-                    $"Это действие нельзя будет отменить.", 
+                    "Вы действительно желаете удалить " +
+                    string.Format("({0}) свойств(о/а)? ", PropertiesDataGrid.SelectedItems.Count) +
+                    "Это действие нельзя будет отменить.", 
                     "Удаление свойств", 
                     MessageBoxButton.YesNo, 
                     MessageBoxImage.Warning) == MessageBoxResult.No)
@@ -119,6 +101,20 @@ namespace Classification.Frames
 
                 PropertyArousedConceptsDataGrid.ItemsSource = null;
             }
+        }
+
+        private void InitializeTables()
+        {
+            DataTables.PropertiesDataTable = new DataTable();
+
+            DataTables.PropertyArousedConceptsDataTable = new DataTable();
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            InitializeTables();
+
+            RefreshDataGrid();           
         }
     }
 }

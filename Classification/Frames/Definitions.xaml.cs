@@ -1,22 +1,9 @@
-﻿using System;
-using System.Collections;
+﻿using Classification.Utility.SQL;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-using Classification.Utility.SQL;
-using System.Data.SqlClient;
-using System.Data;
 
 namespace Classification.Frames
 {
@@ -36,10 +23,7 @@ namespace Classification.Frames
         {
             _SQLClient = client;
 
-            DataTables.DefinitiosDataTable = new System.Data.DataTable();         
-            DefinitionsDataGrid.ItemsSource = DataTables.DefinitiosDataTable?.DefaultView;
-
-            SelectClassifications();
+            InitializeTables();
         }
 
         private void SelectClassifications()
@@ -63,6 +47,9 @@ namespace Classification.Frames
 
         private void SelectDefinitions()
         {
+            if (ClassificationsComboBox.SelectedItem == null)
+                return;
+
             int classificationId = int.Parse(ClassificationsComboBox
                 .SelectedItem
                 .ToString()
@@ -72,12 +59,26 @@ namespace Classification.Frames
             DataTables.DefinitiosDataTable = _SQLClient.SelectClassificationDefinitions(classificationId);
 
             DefinitionsDataGrid.ItemsSource = null;
-            DefinitionsDataGrid.ItemsSource = DataTables.DefinitiosDataTable?.DefaultView;
+            DefinitionsDataGrid.ItemsSource = DataTables.DefinitiosDataTable.DefaultView;
         }
 
         private void ClassificationsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             SelectDefinitions();
+        }
+
+        private void InitializeTables()
+        {
+            DataTables.DefinitiosDataTable = new System.Data.DataTable();
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            InitializeTables();
+
+            DefinitionsDataGrid.ItemsSource = DataTables.DefinitiosDataTable.DefaultView;
+
+            SelectClassifications();
         }
     }
 }

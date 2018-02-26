@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:Classification.Frames"
       mc:Ignorable="d" 
       d:DesignHeight="1080" d:DesignWidth="1920" 
-      Title="Sources" >
+      Title="Sources" Loaded="Page_Loaded" >
 
 
 
