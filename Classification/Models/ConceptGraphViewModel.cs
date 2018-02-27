@@ -37,7 +37,7 @@ namespace Classification.Models
         {
             try
             {
-                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(name));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
             }
             catch (IndexOutOfRangeException ex)
             {

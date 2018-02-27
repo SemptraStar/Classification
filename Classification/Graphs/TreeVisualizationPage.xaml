@@ -11,7 +11,7 @@
       mc:Ignorable="d" 
       d:DesignHeight="800" d:DesignWidth="1600"
       Title="TreeVisualizationPage"
-      x:Name="root" Loaded="root_Loaded">
+      x:Name="root">
 
     <Page.Resources>
         <DataTemplate x:Key="ConceptVertexTemplate" DataType="{x:Type customGraphs:ConceptVertex}">
@@ -44,7 +44,7 @@
 
     </Page.Resources>
 
-    <Grid>
+    <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown">
         <zoom:ZoomControl x:Name="ZoomControl" BorderBrush="Black" BorderThickness="1" Zoom="0.2" ZoomBoxOpacity="0.5" Margin="0,33,605,205">
             <customGraphs:ConceptGraphLayout x:Name="graphLayout" Margin="10"
 						Graph="{Binding Path=Graph}"

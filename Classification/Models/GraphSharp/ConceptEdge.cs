@@ -19,7 +19,7 @@ namespace Classification.Models.GraphSharp
 
         private void NotifyPropertyChanged(string name)
         {
-            PropertyChanged.Invoke(this, new PropertyChangedEventArgs(name));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
     }
 }

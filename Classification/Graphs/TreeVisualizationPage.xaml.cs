@@ -44,6 +44,7 @@ namespace Classification.Graphs
         public TreeVisualizationPage(SQLClient sqlClient) : this()
         {
             _SQLClient = sqlClient;         
+            SelectClassifications();
         }
 
         public void SelectClassifications()
@@ -109,6 +110,8 @@ namespace Classification.Graphs
         private void ChangeConceptParent(int newParentId)
         {
             _isChangingParentConceptActive = false;
+
+            Mouse.OverrideCursor = Cursors.Arrow;
 
             _SQLClient.UpdateClassificationConceptParent(
                 _selectedClassificationId,
@@ -187,7 +190,7 @@ namespace Classification.Graphs
             }
 
             var result = MessageBox.Show(
-                "Вы действительно хотите удалить ({PropertiesDataGrid.SelectedItems.Count}) свойств?",
+                $"Вы действительно хотите удалить ({PropertiesDataGrid.SelectedItems.Count}) свойств?",
                 "Внимание",
                 MessageBoxButton.YesNoCancel,
                 MessageBoxImage.Question);
@@ -246,6 +249,9 @@ namespace Classification.Graphs
         private void ChangeConceptParent_MouseClick(object sender, MouseButtonEventArgs e)
         {
             _isChangingParentConceptActive = true;
+
+            Mouse.OverrideCursor = Cursors.Hand;
+
             _selectedForChangingParentConceptId = ((((
                 sender as MenuItem)
                .Parent as ContextMenu)
@@ -308,9 +314,11 @@ namespace Classification.Graphs
             }
         }
 
-        private void root_Loaded(object sender, RoutedEventArgs e)
+        private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            SelectClassifications();
+            _isChangingParentConceptActive = false;
+
+            Mouse.OverrideCursor = Cursors.Arrow;
         }
     }
 }

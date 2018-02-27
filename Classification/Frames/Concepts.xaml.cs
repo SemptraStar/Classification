@@ -1,10 +1,8 @@
 ﻿using Classification.Utility.SQL;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 
 namespace Classification.Frames
 {
@@ -32,7 +30,13 @@ namespace Classification.Frames
         {
             _SQLClient = client;
 
-            InitializeTables();
+            DataTables.ConceptsDataTable = new DataTable();
+            SelectConcepts();
+
+            DataTables.ConceptChildsDataTable = new DataTable();
+            ConceptChildsDataGrid.ItemsSource = DataTables.ConceptChildsDataTable?.DefaultView;
+
+            SelectClassifications();
         }
 
         public void SelectConcepts()
@@ -69,30 +73,19 @@ namespace Classification.Frames
             ConceptChildsDataGrid.Items.Refresh();
         }
 
-        private void InitializeTables()
-        {
-            DataTables.ConceptsDataTable = new DataTable();
-
-            DataTables.ConceptChildsDataTable = new DataTable();
-        }
-
         private void SelectClassificationConcepts(int conceptId, int classificationId)
         {
             DataTables.ConceptChildsDataTable = _selectedConceptsType == 0 ?
                 _SQLClient.SelectConceptChilds(conceptId, classificationId) :
                 _SQLClient.SelectConceptParents(conceptId, classificationId);
 
-            ConceptChildsDataGrid.ItemsSource = DataTables.ConceptChildsDataTable.DefaultView;
+            ConceptChildsDataGrid.ItemsSource = DataTables.ConceptChildsDataTable?.DefaultView;
         }
 
         private void ClassificationsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (ClassificationsComboBox.SelectedItem != null)
-            {
-                _selectedClassificationId = int.Parse(ClassificationsComboBox.SelectedItem.ToString().Split('.')[0]);
-
-                DisplayConceptChilds();
-            }           
+            _selectedClassificationId = int.Parse(ClassificationsComboBox.SelectedItem.ToString().Split('.')[0]);
+            DisplayConceptChilds();
         }
 
         private void ConceptsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -139,9 +132,9 @@ namespace Classification.Frames
                 int conceptId = (int)selectedConcept["Id"];
 
                 if (MessageBox.Show(
-                    "Вы действительно желаете удалить " +
-                    String.Format("понятие {0}? ", (string)selectedConcept[Name]) +
-                    "Это действие нельзя будет отменить.",
+                    $"Вы действительно желаете удалить " +
+                    $"понятие {selectedConcept["Name"].ToString().Trim()}? " +
+                    $"Это действие нельзя будет отменить.",
                     "Удаление понятия",
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Warning) == MessageBoxResult.No)
@@ -190,17 +183,6 @@ namespace Classification.Frames
 
                 changeConceptWindow.Show();
             }
-        }
-
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            InitializeTables();
-
-            SelectConcepts();
-            
-            ConceptChildsDataGrid.ItemsSource = DataTables.ConceptChildsDataTable.DefaultView;
-
-            SelectClassifications();
         }
     }
 }

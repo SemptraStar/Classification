@@ -1,8 +1,22 @@
-﻿using Classification.Utility.SQL;
-using System;
-using System.Data;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+
+using Classification.Utility.SQL;
+using System.Data.SqlClient;
+using System.Data;
 
 namespace Classification.Frames
 {
@@ -26,7 +40,9 @@ namespace Classification.Frames
         {
             _SQLClient = client;
 
-            InitializeTables();
+            DataTables.SourcesDataTable = new System.Data.DataTable();
+
+            SelectSources();
         }
 
         public void SelectSources()
@@ -35,14 +51,14 @@ namespace Classification.Frames
             DataTables.SourcesDataTable = _SQLClient.SelectSources();
 
             SourcesDataGrid.ItemsSource = null;
-            SourcesDataGrid.ItemsSource = DataTables.SourcesDataTable.DefaultView;
+            SourcesDataGrid.ItemsSource = DataTables.SourcesDataTable?.DefaultView;
         }
         private void SelectSourceDefinitions()
         {
             DataTable dataTable = _SQLClient.SelectSourceDefinitions(_SelectedSourceId);
 
             DefinitionsDataGrid.ItemsSource = null;
-            DefinitionsDataGrid.ItemsSource = dataTable.DefaultView;
+            DefinitionsDataGrid.ItemsSource = dataTable?.DefaultView;
         }
         
         private void SourcesDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -81,9 +97,9 @@ namespace Classification.Frames
             if (SourcesDataGrid.SelectedItems.Count > 0)
             {
                 if (MessageBox.Show(
-                    "Вы действительно желаете удалить " +
-                    String.Format("({0}) источник(а/ов)? ", SourcesDataGrid.SelectedItems.Count) +
-                    "Это действие нельзя будет отменить.",
+                    $"Вы действительно желаете удалить " +
+                    $"({SourcesDataGrid.SelectedItems.Count}) источник(а/ов)? " +
+                    $"Это действие нельзя будет отменить.",
                     "Удаление источников",
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Warning) == MessageBoxResult.No)
@@ -99,18 +115,6 @@ namespace Classification.Frames
                 SelectSources();
                 SelectSourceDefinitions();
             }
-        }
-
-        private void InitializeTables()
-        {
-            DataTables.SourcesDataTable = new System.Data.DataTable();
-        }
-
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            InitializeTables();
-
-            SelectSources();
         }
     }
 }
